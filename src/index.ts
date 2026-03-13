@@ -21,6 +21,7 @@ export type {
   ModalBodyProps,
   ModalFooterProps,
   ModalCloseProps,
+  ModalSize,
 } from "./components/modal";
 
 export { ToastProvider, useToast } from "./components/toast";

@@ -164,6 +164,8 @@ export default defineConfig({
           scaleIn: { value: "scaleIn {durations.slow} {easings.rubberHeavy}" },
           scaleOut: { value: "scaleOut {durations.fast} {easings.in}" },
           slideDown: { value: "slideDown {durations.normal} {easings.rubber}" },
+          slideUp: { value: "slideUp {durations.slow} {easings.rubber}" },
+          slideDownExit: { value: "slideDownExit {durations.fast} {easings.in}" },
           pulse: { value: "pulse 1.5s {easings.inOut} infinite" },
           shake: { value: "shake {durations.normal} {easings.default}" },
           spin: { value: "spin 0.8s linear infinite" },
@@ -294,6 +296,16 @@ export default defineConfig({
         slideDown: {
           from: { opacity: "0", transform: "translateY(-4px)" },
           to: { opacity: "1", transform: "translateY(0)" },
+        },
+        // Slide up — full-screen modal entrance from bottom
+        slideUp: {
+          from: { transform: "translateY(100%)" },
+          to: { transform: "translateY(0)" },
+        },
+        // Slide down exit — full-screen modal dismissal
+        slideDownExit: {
+          from: { transform: "translateY(0)" },
+          to: { transform: "translateY(100%)" },
         },
         pulse: {
           "0%, 100%": { opacity: "1" },

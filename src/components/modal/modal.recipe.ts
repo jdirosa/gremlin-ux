@@ -1,11 +1,11 @@
-import { css } from "@styled-system/css";
+import { css, cva } from "@styled-system/css";
 
 /**
- * Modal styles — Panda CSS `css()` definitions for the Modal sub-elements.
+ * Modal styles — Panda CSS definitions for the Modal sub-elements.
  *
- * Modal is a compound layout component, not a variant-driven component like Button,
- * so it uses plain css() definitions rather than cva(). Each sub-element
- * (overlay, content, header, body, footer, close) gets its own style object.
+ * The content panel uses cva() with a `size` variant to support different
+ * modal sizes including a full-screen mobile takeover mode.
+ * Other sub-elements use plain css() definitions.
  *
  * Animation spec from DESIGN_DIRECTION.md section 8.4:
  * - Backdrop: ink black at 70% opacity, fades in over duration.normal
@@ -45,48 +45,121 @@ export const modalOverlayStyles = css({
 });
 
 /**
- * Content panel — the main dialog container.
+ * Content panel recipe — supports size variants.
  *
- * Canvas charcoal fill (bg.surface semantic), 16px radius, 3px border
- * in border.hover. inkOffset box-shadow for the woodblock print effect.
- * Scales in from 0.90 with rubberHeavy bounce.
+ * | Size   | maxWidth | Notes                          |
+ * |--------|----------|--------------------------------|
+ * | `sm`   | 400px    | Confirmations, alerts          |
+ * | `md`   | 480px    | Default, backward compatible   |
+ * | `lg`   | 640px    | Complex forms                  |
+ * | `full` | 100vw    | Mobile takeover, slide-up anim |
  */
-export const modalContentStyles = css({
-  position: "relative",
-  display: "flex",
-  flexDirection: "column",
-  bg: "bg.surface",
-  borderRadius: "lg",
-  borderStyle: "solid",
-  borderWidth: "thick",
-  borderColor: "border.hover",
-  boxShadow: "inkOffset",
-  width: "calc(100% - 32px)",
-  maxWidth: "480px",
-  maxHeight: "calc(100vh - 64px)",
-  overflow: "hidden",
-  outline: "none",
+export const modalContentRecipe = cva({
+  base: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    bg: "bg.surface",
+    overflow: "hidden",
+    outline: "none",
 
-  // Open state animation — bouncy scale-in
-  "&[data-state=open]": {
-    _motionSafe: {
-      animation: "scaleIn",
+    // Focus ring on the dialog itself (keyboard focus)
+    _focusVisible: {
+      boxShadow:
+        "0 0 0 3px token(colors.accent.subtle), 0 0 0 1px token(colors.accent), token(shadows.inkOffset)",
     },
   },
+  variants: {
+    size: {
+      sm: {
+        borderRadius: "lg",
+        borderStyle: "solid",
+        borderWidth: "thick",
+        borderColor: "border.hover",
+        boxShadow: "inkOffset",
+        width: "calc(100% - 32px)",
+        maxWidth: "400px",
+        maxHeight: "calc(100vh - 64px)",
 
-  // Closed state animation — quick shrink-away
-  "&[data-state=closed]": {
-    _motionSafe: {
-      animation: "scaleOut token(durations.fast) token(easings.in)",
+        "&[data-state=open]": {
+          _motionSafe: {
+            animation: "scaleIn",
+          },
+        },
+        "&[data-state=closed]": {
+          _motionSafe: {
+            animation: "scaleOut token(durations.fast) token(easings.in)",
+          },
+        },
+      },
+      md: {
+        borderRadius: "lg",
+        borderStyle: "solid",
+        borderWidth: "thick",
+        borderColor: "border.hover",
+        boxShadow: "inkOffset",
+        width: "calc(100% - 32px)",
+        maxWidth: "480px",
+        maxHeight: "calc(100vh - 64px)",
+
+        "&[data-state=open]": {
+          _motionSafe: {
+            animation: "scaleIn",
+          },
+        },
+        "&[data-state=closed]": {
+          _motionSafe: {
+            animation: "scaleOut token(durations.fast) token(easings.in)",
+          },
+        },
+      },
+      lg: {
+        borderRadius: "lg",
+        borderStyle: "solid",
+        borderWidth: "thick",
+        borderColor: "border.hover",
+        boxShadow: "inkOffset",
+        width: "calc(100% - 32px)",
+        maxWidth: "640px",
+        maxHeight: "calc(100vh - 64px)",
+
+        "&[data-state=open]": {
+          _motionSafe: {
+            animation: "scaleIn",
+          },
+        },
+        "&[data-state=closed]": {
+          _motionSafe: {
+            animation: "scaleOut token(durations.fast) token(easings.in)",
+          },
+        },
+      },
+      full: {
+        width: "100vw",
+        height: "100dvh",
+        borderRadius: "0",
+        border: "none",
+        boxShadow: "none",
+
+        "&[data-state=open]": {
+          _motionSafe: {
+            animation: "slideUp",
+          },
+        },
+        "&[data-state=closed]": {
+          _motionSafe: {
+            animation: "slideDownExit",
+          },
+        },
+      },
     },
   },
-
-  // Focus ring on the dialog itself (keyboard focus)
-  _focusVisible: {
-    boxShadow:
-      "0 0 0 3px token(colors.accent.subtle), 0 0 0 1px token(colors.accent), token(shadows.inkOffset)",
+  defaultVariants: {
+    size: "md",
   },
 });
+
+export type ModalSize = "sm" | "md" | "lg" | "full";
 
 /** Header — title area with bottom border divider */
 export const modalHeaderStyles = css({

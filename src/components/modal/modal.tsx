@@ -18,11 +18,12 @@ import { cx } from "@styled-system/css";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import {
   modalOverlayStyles,
-  modalContentStyles,
+  modalContentRecipe,
   modalHeaderStyles,
   modalBodyStyles,
   modalFooterStyles,
   modalCloseStyles,
+  type ModalSize,
 } from "./modal.recipe";
 
 // ── Modal Context ─────────────────────────────────────────────────────
@@ -38,6 +39,8 @@ interface ModalContextValue {
   bodyId: string;
   /** The trigger element ref — focus returns here on close */
   triggerRef: React.RefObject<HTMLElement | null>;
+  /** The current modal size — sub-components can adapt */
+  size: ModalSize;
 }
 
 const ModalContext = createContext<ModalContextValue | undefined>(undefined);
@@ -138,6 +141,7 @@ function ModalRoot({ open: openProp, onOpenChange, defaultOpen = false, children
       headerId,
       bodyId,
       triggerRef,
+      size: "md",
     }),
     [open, setOpen, headerId, bodyId, triggerRef],
   );
@@ -203,6 +207,8 @@ const ModalTrigger = forwardRef<HTMLButtonElement, ModalTriggerProps>(
 // ── Modal.Content ─────────────────────────────────────────────────────
 
 export type ModalContentProps = {
+  /** Size variant for the content panel */
+  size?: ModalSize;
   /** Additional class names for the content panel */
   className?: string;
   children: ReactNode;
@@ -223,8 +229,9 @@ export type ModalContentProps = {
  * - Focus restoration to trigger on close
  */
 const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
-  function ModalContent({ className, children, ...rest }, ref) {
-    const { open, onOpenChange, headerId, bodyId, triggerRef } = useModalContext();
+  function ModalContent({ size = "md", className, children, ...rest }, ref) {
+    const ctx = useModalContext();
+    const { open, onOpenChange, headerId, bodyId, triggerRef } = ctx;
     const contentRef = useRef<HTMLDivElement | null>(null);
     const previouslyFocusedRef = useRef<HTMLElement | null>(null);
     const wasOpenRef = useRef(false);
@@ -373,29 +380,34 @@ const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
 
     if (!open) return null;
 
+    // Provide the resolved size to sub-components via context override
+    const sizedContext: ModalContextValue = { ...ctx, size };
+
     return createPortal(
-      <div
-        className={modalOverlayStyles}
-        data-state="open"
-        onClick={handleBackdropClick}
-        onAnimationEnd={handleAnimationEnd}
-      >
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+      <ModalContext.Provider value={sizedContext}>
         <div
-          ref={mergedRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={headerId}
-          aria-describedby={bodyId}
-          className={cx(modalContentStyles, className)}
+          className={modalOverlayStyles}
           data-state="open"
-          tabIndex={-1}
-          onKeyDown={handleKeyDown}
-          {...rest}
+          onClick={handleBackdropClick}
+          onAnimationEnd={handleAnimationEnd}
         >
-          {children}
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+          <div
+            ref={mergedRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={headerId}
+            aria-describedby={bodyId}
+            className={cx(modalContentRecipe({ size }), className)}
+            data-state="open"
+            tabIndex={-1}
+            onKeyDown={handleKeyDown}
+            {...rest}
+          >
+            {children}
+          </div>
         </div>
-      </div>,
+      </ModalContext.Provider>,
       document.body,
     );
   },

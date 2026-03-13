@@ -8,3 +8,4 @@ export type {
   ModalFooterProps,
   ModalCloseProps,
 } from "./modal";
+export type { ModalSize } from "./modal.recipe";
