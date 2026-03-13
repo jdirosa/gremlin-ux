@@ -1,0 +1,249 @@
+# Gremlin UI — Machine-Readable API Reference for LLMs
+# This structured reference enables AI assistants to generate
+# design-system-compliant code on the first try.
+
+components:
+  Button:
+    import: "@gremlin-ui/react"
+    props:
+      variant:
+        type: "'solid' | 'outline' | 'ghost' | 'link'"
+        default: "solid"
+      size:
+        type: "'sm' | 'md' | 'lg'"
+        default: "md"
+      width:
+        type: "'auto' | 'full'"
+        default: "auto"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element instead of rendering a <button>"
+      loading:
+        type: "boolean"
+        description: "Shows spinner, sets aria-busy, maintains width"
+      loadingText:
+        type: "string"
+        description: "Text shown during loading state"
+      leftIcon:
+        type: "ReactElement"
+        description: "Icon rendered before button text"
+      rightIcon:
+        type: "ReactElement"
+        description: "Icon rendered after button text"
+    accessibility:
+      - "Uses aria-disabled instead of HTML disabled (keeps focusable)"
+      - "Sets aria-busy during loading"
+      - "Focus ring only on keyboard navigation (focus-visible)"
+    examples:
+      basic: '<Button variant="solid">Save</Button>'
+      as_link: '<Button asChild><a href="/path">Go</a></Button>'
+      loading: '<Button loading loadingText="Saving...">Save</Button>'
+
+  TextInput:
+    import: "@gremlin-ui/react"
+    props:
+      size:
+        type: "'sm' | 'md' | 'lg'"
+        default: "md"
+      isError:
+        type: "boolean"
+        description: "Error state styling (auto-set by FormField)"
+      leftElement:
+        type: "ReactNode"
+        description: "Element inside input on left (e.g., search icon)"
+      rightElement:
+        type: "ReactNode"
+        description: "Element inside input on right (e.g., clear button)"
+      leftAddon:
+        type: "ReactNode"
+        description: "Addon outside input on left"
+      rightAddon:
+        type: "ReactNode"
+        description: "Addon outside input on right"
+    accessibility:
+      - "Auto-wired via FormField context (id, aria-invalid, aria-describedby, aria-required)"
+      - "Error state triggers border color change + shake animation"
+    examples:
+      basic: '<TextInput placeholder="Enter text..." />'
+      with_icon: '<TextInput leftElement={<SearchIcon />} placeholder="Search..." />'
+      in_form: |
+        <FormField label="Email" required>
+          <TextInput type="email" placeholder="you@company.com" />
+        </FormField>
+
+  FormField:
+    import: "@gremlin-ui/react"
+    props:
+      label:
+        type: "string"
+        required: true
+        description: "Label text displayed above the input"
+      description:
+        type: "string"
+        description: "Helper text below the input"
+      error:
+        type: "string"
+        description: "Error message. When set, field enters error state."
+      required:
+        type: "boolean"
+        description: "Adds visual indicator and aria-required"
+    accessibility:
+      - "Auto-generates id and wires htmlFor on label"
+      - "Passes aria-invalid, aria-describedby, aria-required via React Context"
+      - "Error message has role=alert for screen reader announcement"
+    pattern: "Wrap ANY form input — TextInput, Autocomplete trigger, etc."
+    examples:
+      basic: |
+        <FormField label="Name" required>
+          <TextInput placeholder="Your name" />
+        </FormField>
+      with_error: |
+        <FormField label="Email" required error="Please enter a valid email">
+          <TextInput type="email" />
+        </FormField>
+
+  Modal:
+    import: "@gremlin-ui/react"
+    compound_parts:
+      - "Modal.Trigger"
+      - "Modal.Content"
+      - "Modal.Header"
+      - "Modal.Body"
+      - "Modal.Footer"
+      - "Modal.Close"
+    props:
+      open:
+        type: "boolean"
+        description: "Controlled open state"
+      defaultOpen:
+        type: "boolean"
+        description: "Default open state for uncontrolled mode"
+      onOpenChange:
+        type: "(open: boolean) => void"
+        description: "Callback when open state changes"
+    accessibility:
+      - "role=dialog with aria-modal=true and aria-labelledby"
+      - "Focus trap: Tab cycles through focusable elements"
+      - "Focus moves to first focusable on open, returns to trigger on close"
+      - "Escape closes the modal"
+      - "Body scroll locked while open"
+    examples:
+      basic: |
+        <Modal>
+          <Modal.Trigger asChild>
+            <Button>Open</Button>
+          </Modal.Trigger>
+          <Modal.Content>
+            <Modal.Header>Title</Modal.Header>
+            <Modal.Body>Content</Modal.Body>
+            <Modal.Footer>
+              <Modal.Close asChild><Button variant="ghost">Cancel</Button></Modal.Close>
+              <Button>Confirm</Button>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+
+  Autocomplete:
+    import: "@gremlin-ui/react"
+    compound_parts:
+      - "Autocomplete.Trigger"
+      - "Autocomplete.Input"
+      - "Autocomplete.Content"
+      - "Autocomplete.List"
+      - "Autocomplete.Item"
+      - "Autocomplete.Group"
+      - "Autocomplete.GroupLabel"
+      - "Autocomplete.Empty"
+      - "Autocomplete.Create"
+      - "Autocomplete.Separator"
+    props:
+      value:
+        type: "string | string[] | null"
+        description: "Controlled selected value"
+      defaultValue:
+        type: "string | null"
+        description: "Default value for uncontrolled mode"
+      onValueChange:
+        type: "(value: string) => void"
+        description: "Callback when value changes"
+      onSearchTermChange:
+        type: "(term: string) => void"
+        description: "Callback when search term changes. Consumer handles filtering."
+      multiple:
+        type: "boolean"
+        description: "Enable multi-select mode"
+      open:
+        type: "boolean"
+        description: "Controlled open state"
+      onOpenChange:
+        type: "(open: boolean) => void"
+    patterns:
+      simple_dropdown: "Trigger + Content + List + Items (no Input)"
+      searchable: "Trigger + Content + Input + List + Items + Empty"
+      grouped_with_create: "Add Group/GroupLabel wrappers + Create action"
+    accessibility:
+      - "role=combobox on trigger with aria-expanded, aria-controls"
+      - "role=listbox on list, role=option on items"
+      - "Arrow keys navigate, Enter selects, Escape closes"
+      - "Home/End jump to first/last item"
+      - "aria-live announces result count changes"
+    examples:
+      simple_dropdown: |
+        <Autocomplete value={role} onValueChange={setRole}>
+          <Autocomplete.Trigger asChild>
+            <Button variant="outline">{role ?? 'Select role'}</Button>
+          </Autocomplete.Trigger>
+          <Autocomplete.Content>
+            <Autocomplete.List>
+              <Autocomplete.Item value="eng">Engineer</Autocomplete.Item>
+              <Autocomplete.Item value="design">Designer</Autocomplete.Item>
+            </Autocomplete.List>
+          </Autocomplete.Content>
+        </Autocomplete>
+      searchable: |
+        <Autocomplete onValueChange={setSkill} onSearchTermChange={handleSearch}>
+          <Autocomplete.Trigger asChild>
+            <TextInput leftElement={<SearchIcon />} placeholder="Search..." />
+          </Autocomplete.Trigger>
+          <Autocomplete.Content>
+            <Autocomplete.Input placeholder="Type to search..." />
+            <Autocomplete.List>
+              {results.map(r => (
+                <Autocomplete.Item key={r.id} value={r.id}>{r.name}</Autocomplete.Item>
+              ))}
+            </Autocomplete.List>
+            <Autocomplete.Empty>No results</Autocomplete.Empty>
+          </Autocomplete.Content>
+        </Autocomplete>
+
+tokens:
+  colors:
+    semantic:
+      bg: [canvas, surface, subtle, muted, emphasis]
+      fg: [DEFAULT, muted, subtle, onEmphasis]
+      border: [DEFAULT, hover, focus]
+      accent: [DEFAULT, hover, subtle]
+      status: [success, warning, error, info]
+    usage: "Always use semantic tokens. Never reference primitives (gray.900) in components."
+  spacing:
+    scale: { 0: "0", 1: "4px", 2: "8px", 3: "12px", 4: "16px", 5: "20px", 6: "24px", 8: "32px", 10: "40px", 12: "48px" }
+  radii: { sm: "4px", md: "6px", lg: "8px", xl: "12px", full: "9999px" }
+  motion:
+    durations: { instant: "100ms", fast: "150ms", normal: "200ms", slow: "300ms", slower: "500ms" }
+    easings: { default: "ease", in: "ease-in", out: "ease-out", inOut: "ease-in-out", spring: "cubic-bezier(0.34, 1.56, 0.64, 1)" }
+    rule: "Always wrap in _motionSafe condition. CSS-only, no Framer Motion."
+
+hooks:
+  useControllableState:
+    import: "@gremlin-ui/react"
+    description: "Manages state that can be controlled or uncontrolled"
+    usage: "Used internally by Modal, Autocomplete. Available for custom components."
+  useClickOutside:
+    import: "@gremlin-ui/react"
+    description: "Calls handler on click outside referenced element"
+  useFocusTrap:
+    import: "@gremlin-ui/react"
+    description: "Traps focus within container. Used by Modal."
+  useKeyboardNavigation:
+    import: "@gremlin-ui/react"
+    description: "Arrow key navigation for list-based components"
