@@ -52,6 +52,10 @@ export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, Spac
 export { entranceRecipe } from "./recipes";
 export type { EntranceVariantProps } from "./recipes";
 
+// ── Tokens ───────────────────────────────────────────────────────────
+export { token } from "./tokens";
+export type { Token } from "./tokens";
+
 // ── Hooks ─────────────────────────────────────────────────────────────
 export { useFormFieldContext, useControllableState } from "./hooks";
 export type { FormFieldContextValue } from "./hooks";
