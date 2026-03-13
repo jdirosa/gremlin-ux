@@ -45,8 +45,8 @@ export type {
 } from "./components/autocomplete";
 
 // ── Layout ───────────────────────────────────────────────────────────
-export { Box, Stack, HStack, Grid, Container } from "./components/layout";
-export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, SpacingToken, RadiiToken, ContainerSize } from "./components/layout";
+export { Box, Stack, HStack, Grid, Container, Text, Heading } from "./components/layout";
+export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, TextProps, HeadingProps, SpacingToken, RadiiToken, ContainerSize } from "./components/layout";
 
 // ── Recipes ───────────────────────────────────────────────────────────
 export { entranceRecipe } from "./recipes";

@@ -13,4 +13,10 @@ export type { GridProps } from "./grid";
 export { Container } from "./container";
 export type { ContainerProps } from "./container";
 
+export { Text } from "./text";
+export type { TextProps } from "./text";
+
+export { Heading } from "./heading";
+export type { HeadingProps } from "./heading";
+
 export type { SpacingToken, RadiiToken, ContainerSize } from "./layout.types";
