@@ -498,10 +498,11 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
               const selectedVal = vals[highlightedIndex];
               if (selectedVal) {
                 toggleValue(selectedVal);
-                // Single-select: close on pick. Multi-select: stay open.
+                // Single-select: close on pick and restore focus. Multi-select: stay open.
                 if (!multiple) {
                   onOpenChange(false);
                   onSearchTermChange("");
+                  triggerRef.current?.focus({ preventScroll: true });
                 }
               }
             }
@@ -510,7 +511,7 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
           case "Escape": {
             e.preventDefault();
             onOpenChange(false);
-            triggerRef.current?.focus();
+            triggerRef.current?.focus({ preventScroll: true });
             break;
           }
         }
@@ -662,6 +663,7 @@ const AutocompleteItem = forwardRef<HTMLDivElement, AutocompleteItemProps>(
       itemValues,
       onSearchTermChange,
       getItemId,
+      triggerRef,
     } = useAutocompleteContext();
 
     const itemRef = useRef<HTMLDivElement | null>(null);
@@ -700,12 +702,13 @@ const AutocompleteItem = forwardRef<HTMLDivElement, AutocompleteItemProps>(
     const handleClick = useCallback(() => {
       if (disabled) return;
       toggleValue(itemValue);
-      // Single-select: close on pick. Multi-select: stay open.
+      // Single-select: close on pick and restore focus. Multi-select: stay open.
       if (!multiple) {
         onOpenChange(false);
         onSearchTermChange("");
+        triggerRef.current?.focus({ preventScroll: true });
       }
-    }, [disabled, itemValue, toggleValue, multiple, onOpenChange, onSearchTermChange]);
+    }, [disabled, itemValue, toggleValue, multiple, onOpenChange, onSearchTermChange, triggerRef]);
 
     const handleMouseEnter = useCallback(() => {
       if (disabled) return;
