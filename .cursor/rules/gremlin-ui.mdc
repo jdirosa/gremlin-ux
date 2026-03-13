@@ -42,6 +42,23 @@ globs: ["src/**/*.tsx", "src/**/*.ts"]
 </Container>
 ```
 
+## Typography Components
+- Use `<Text>` for all body text — renders `<p>` by default
+- Use `<Text as="span">` for inline text inside other text elements
+- Use `<Heading level={N}>` for all headings (h1–h6) — uses heading font automatically
+- NEVER use raw `<p>`, `<h1>`, `<h2>`, etc. with manual css() typography — use Text/Heading instead
+- NEVER nest `<Text>` (which renders `<p>`) inside another `<Text>` — use `<Text as="span">` for the inner one
+
+### Typography examples:
+```tsx
+<Heading level={2} size="2xl" align="center">Section Title</Heading>
+<Text size="sm" color="muted">Body text paragraph</Text>
+<Text size="sm" color="muted" italic>
+  Selected: <Text as="span" color="accent" weight="semibold">{value}</Text>
+</Text>
+<Text font="mono" size="xs" color="subtle">Code-like text</Text>
+```
+
 ## Accessibility Requirements
 - All interactive elements need `focus-visible` styling (handled by the component, but custom wrappers must preserve it)
 - Use `aria-live="polite"` for dynamic content changes (search results, tag additions/removals)

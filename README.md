@@ -13,13 +13,20 @@ npm install @gremlin-ui/react
 ## Quick Start
 
 ```tsx
-import { Button, TextInput, FormField, Modal, Autocomplete } from "@gremlin-ui/react";
+import { Button, TextInput, FormField, Stack, Container, Text, Heading } from "@gremlin-ui/react";
 
 function App() {
   return (
-    <FormField label="Email" required>
-      <TextInput type="email" placeholder="you@somewhere.com" />
-    </FormField>
+    <Container maxWidth="lg">
+      <Stack gap="6">
+        <Heading level={1} size="2xl">Get in Touch</Heading>
+        <Text color="muted">We'd love to hear from you.</Text>
+        <FormField label="Email" required>
+          <TextInput type="email" placeholder="you@somewhere.com" />
+        </FormField>
+        <Button variant="solid">Submit</Button>
+      </Stack>
+    </Container>
   );
 }
 ```
@@ -34,6 +41,18 @@ function App() {
 | Molecule | **Modal** | Focus trap, portal, scroll lock, compound API, rubber-bounce entrance. |
 | Molecule | **Toast** | Stacking notifications with position control and auto-dismiss. |
 | Organism | **Autocomplete** | Multi-select, keyboard nav, Floating UI positioning, grouped items. |
+
+## Layout & Typography
+
+| Component | Description |
+|-----------|-------------|
+| **Box** | Generic container with padding and borderRadius props. |
+| **Stack** | Vertical flex layout with gap. |
+| **HStack** | Horizontal flex layout with gap and wrap. |
+| **Grid** | CSS grid with columns prop. |
+| **Container** | Max-width centered container (sm/md/lg/xl/full). |
+| **Text** | Typography component. Renders `<p>` by default, `as="span"` for inline. |
+| **Heading** | Heading component (h1–h6) with heading font. |
 
 ## Themes
 
