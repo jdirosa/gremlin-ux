@@ -1,0 +1,104 @@
+---
+description: Gremlin UI design system rules for AI-assisted development
+globs: ["src/**/*.tsx", "src/**/*.ts"]
+---
+
+# Gremlin UI — AI Coding Rules
+
+## Token Usage
+- NEVER use raw color values (hex, rgb, hsl). Use semantic tokens: `colors.fg.DEFAULT`, `colors.bg.surface`, `colors.accent.DEFAULT`
+- NEVER use raw spacing values. Use the spacing scale: `spacing.1` (4px) through `spacing.12` (48px)
+- For dark mode support, use semantic tokens — they swap automatically. Components should NEVER reference `colors.gray.900` directly.
+
+## Component Patterns
+- Use compound components for complex widgets. `<Autocomplete.Trigger>`, not `trigger={<Button />}` props
+- Use `asChild` for polymorphism: `<Button asChild><a href="...">Link</a></Button>`, NOT `<Button as="a">`
+- Every `<IconButton>` MUST have `aria-label`. TypeScript enforces this, but catch it before the type checker does.
+- Wrap form inputs in `<FormField>` for automatic label/error/description association. Never wire `htmlFor` manually.
+
+## Layout Components
+- Use `<Stack>` for vertical flex layouts with gap (default gap="4")
+- Use `<HStack>` for horizontal flex layouts with gap (default gap="3")
+- Use `<Grid columns={N}>` for CSS grid layouts (default gap="4")
+- Use `<Container>` for max-width centered containers (default maxWidth="lg", paddingX="6")
+- Use `<Box>` for generic styled containers with padding/borderRadius props
+- All layout components support `asChild` for polymorphism
+- NEVER use raw `display: "flex"` or `display: "grid"` — use layout components instead
+
+### Layout examples:
+```tsx
+<Container maxWidth="xl">
+  <Stack gap="6">
+    <HStack justify="between" align="center">
+      <h1>Title</h1>
+      <Button>Action</Button>
+    </HStack>
+    <Grid columns={3} gap="4">
+      <Card />
+      <Card />
+      <Card />
+    </Grid>
+  </Stack>
+</Container>
+```
+
+## Accessibility Requirements
+- All interactive elements need `focus-visible` styling (handled by the component, but custom wrappers must preserve it)
+- Use `aria-live="polite"` for dynamic content changes (search results, tag additions/removals)
+- Test keyboard navigation: Arrow keys in Autocomplete, Escape to close popovers, Tab to move focus forward (never trap in dropdowns)
+
+## Animation
+- All motion uses system tokens: `durations.fast`, `easings.out`, etc.
+- Always wrap animations in `_motionSafe` condition for `prefers-reduced-motion` respect
+- CSS-only animations. No Framer Motion.
+
+## Common Patterns
+
+### Building a form:
+```tsx
+<Stack gap="5">
+  <FormField label="Candidate name" required>
+    <TextInput placeholder="Full name" />
+  </FormField>
+  <FormField label="Role" description="Select the role you're hiring for">
+    <Autocomplete onValueChange={setRole}>
+      <Autocomplete.Trigger asChild>
+        <TextInput placeholder="Select..." rightElement={<ChevronIcon />} />
+      </Autocomplete.Trigger>
+      <Autocomplete.Content>
+        <Autocomplete.Input placeholder="Search roles..." />
+        <Autocomplete.List>
+          <Autocomplete.Item value="design-eng">Design Engineer</Autocomplete.Item>
+          <Autocomplete.Item value="senior-fe">Senior Frontend</Autocomplete.Item>
+        </Autocomplete.List>
+        <Autocomplete.Empty>No roles found</Autocomplete.Empty>
+      </Autocomplete.Content>
+    </Autocomplete>
+  </FormField>
+</Stack>
+```
+
+### Modal with form:
+```tsx
+<Modal>
+  <Modal.Trigger asChild>
+    <Button variant="solid">Get in touch</Button>
+  </Modal.Trigger>
+  <Modal.Content>
+    <Modal.Header>Let's talk</Modal.Header>
+    <Modal.Body>
+      <Stack gap="5">
+        <FormField label="Name" required>
+          <TextInput placeholder="Your name" />
+        </FormField>
+      </Stack>
+    </Modal.Body>
+    <Modal.Footer>
+      <HStack gap="3" justify="end">
+        <Modal.Close asChild><Button variant="ghost">Cancel</Button></Modal.Close>
+        <Button variant="solid">Send</Button>
+      </HStack>
+    </Modal.Footer>
+  </Modal.Content>
+</Modal>
+```

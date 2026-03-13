@@ -44,6 +44,10 @@ export type {
   AutocompleteCreateProps,
 } from "./components/autocomplete";
 
+// ── Layout ───────────────────────────────────────────────────────────
+export { Box, Stack, HStack, Grid, Container } from "./components/layout";
+export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, SpacingToken, RadiiToken, ContainerSize } from "./components/layout";
+
 // ── Recipes ───────────────────────────────────────────────────────────
 export { entranceRecipe } from "./recipes";
 export type { EntranceVariantProps } from "./recipes";

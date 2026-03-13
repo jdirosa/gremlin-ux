@@ -98,6 +98,14 @@ export default defineConfig({
           10: { value: "40px" },
           12: { value: "48px" },
         },
+        sizes: {
+          container: {
+            sm: { value: "640px" },
+            md: { value: "768px" },
+            lg: { value: "1024px" },
+            xl: { value: "1280px" },
+          },
+        },
         radii: {
           sm: { value: "8px" },
           md: { value: "12px" },
