@@ -1,6 +1,6 @@
 {
   "name": "@gremlin-ui/react",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Dark rubber hose design system — React 19 + Panda CSS",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -19,9 +19,9 @@
     ".cursor"
   ],
   "scripts": {
-    "dev": "storybook dev -p 6006",
+    "dev": "panda codegen && storybook dev -p 6006",
     "build": "panda codegen && vite build",
-    "build:storybook": "storybook build",
+    "build:storybook": "panda codegen && storybook build",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
