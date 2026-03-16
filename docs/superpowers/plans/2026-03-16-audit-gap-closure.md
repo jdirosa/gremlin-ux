@@ -1249,3 +1249,43 @@ Verify significant line reduction in `landing-page.tsx`.
 
 Run: `cd ~/repos/gremlin-ux && npm test`
 Expected: All existing tests still pass.
+
+### Task 22: Landing page copy changes
+
+**Files:**
+- Modify: `~/repos/gremlin-ui/src/landing-page.tsx`
+
+- [ ] **Step 1: Rename "The Five Commandments" to "Design Philosophy"**
+
+Find the heading text `The Five Commandments` and replace with `Design Philosophy`.
+
+- [ ] **Step 2: Update "Built With" section copy**
+
+Replace:
+```
+Rigorous engineering underneath the personality.
+You trust it because it&apos;s thorough.
+```
+
+With:
+```
+A fun project built on solid design principles.
+```
+
+- [ ] **Step 3: Clean up modal demo text**
+
+In the modal demo section, find:
+```
+with ARIA. The gremlin is thorough.
+```
+
+Replace with:
+```
+with ARIA.
+```
+
+- [ ] **Step 4: Commit**
+
+```bash
+cd ~/repos/gremlin-ui && git add src/landing-page.tsx && git commit -m "content: tone down copy in philosophy and tech stack sections"
+```

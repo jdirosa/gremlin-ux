@@ -6,6 +6,7 @@ export const badgeRecipe = cva({
   base: {
     display: "inline-flex",
     alignItems: "center",
+    width: "fit-content",
     gap: "2",
     fontFamily: "body",
     fontWeight: "medium",
