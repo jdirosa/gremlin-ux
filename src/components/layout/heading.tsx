@@ -1,43 +1,49 @@
-import { forwardRef, createElement, type ComponentPropsWithoutRef } from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { createElement, forwardRef, type ComponentPropsWithoutRef } from "react";
 import { css, cx } from "@styled-system/css";
+import { Slot } from "@radix-ui/react-slot";
+import { headingRecipe, type HeadingVariantProps } from "./heading.recipe";
 
-type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
-type HeadingSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
-type HeadingAlign = "left" | "center" | "right";
-
-export type HeadingProps = {
-  asChild?: boolean;
-  /** Renders as h1–h6. Defaults to h2. */
-  level?: HeadingLevel;
-  size?: HeadingSize;
-  align?: HeadingAlign;
-  color?: "default" | "muted" | "subtle" | "accent";
-} & ComponentPropsWithoutRef<"h2">;
-
-const colorMap = {
+const colorMap: Record<string, string> = {
   default: "fg",
   muted: "fg.muted",
   subtle: "fg.subtle",
   accent: "accent",
-} as const;
+};
+
+const sizeToLevel: Record<string, number> = {
+  display: 1,
+  title: 2,
+  subtitle: 3,
+  label: 4,
+};
+
+export interface HeadingProps extends Omit<ComponentPropsWithoutRef<"h1">, "color"> {
+  size?: HeadingVariantProps["size"];
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+  stroke?: boolean;
+  color?: "default" | "muted" | "subtle" | "accent";
+  align?: "left" | "center" | "right";
+  asChild?: boolean;
+}
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
-  function Heading({ asChild, level = 2, size = "xl", align, color = "default", className, ...rest }, ref) {
-    const Comp = asChild ? Slot : `h${level}`;
-    return createElement(Comp, {
-      ref,
-      className: cx(
-        css({
-          fontFamily: "heading",
-          fontSize: size,
-          lineHeight: "tight",
-          color: colorMap[color],
-          ...(align != null && { textAlign: align }),
-        }),
-        className,
-      ),
-      ...rest,
+  function Heading(
+    { size, level, stroke, color = "default", align, asChild, className, children, ...rest },
+    ref,
+  ) {
+    const resolvedLevel = level ?? (size ? sizeToLevel[size] : 2);
+    const Comp = asChild ? Slot : (`h${resolvedLevel}` as "h1");
+
+    const recipeClass = headingRecipe({ size, stroke });
+    const inlineClass = css({
+      color: colorMap[color],
+      ...(align != null && { textAlign: align }),
     });
+
+    return createElement(
+      Comp,
+      { ref, className: cx(recipeClass, inlineClass, className), ...rest },
+      children,
+    );
   },
 );
