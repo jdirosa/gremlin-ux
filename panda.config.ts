@@ -88,6 +88,7 @@ export default defineConfig({
         },
         spacing: {
           0: { value: "0" },
+          0.5: { value: "2px" },
           1: { value: "4px" },
           2: { value: "8px" },
           3: { value: "12px" },
@@ -105,6 +106,8 @@ export default defineConfig({
             lg: { value: "1024px" },
             xl: { value: "1280px" },
           },
+          prose: { value: "640px" },
+          proseNarrow: { value: "560px" },
         },
         radii: {
           sm: { value: "8px" },
@@ -130,6 +133,9 @@ export default defineConfig({
           lg: { value: "1.125rem" },
           xl: { value: "1.25rem" },
           "2xl": { value: "1.5rem" },
+          display: { value: "clamp(2.5rem, 5vw, 5rem)" },
+          section: { value: "2.5rem" },
+          sectionSm: { value: "2rem" },
         },
         fontWeights: {
           normal: { value: "400" },
@@ -157,6 +163,12 @@ export default defineConfig({
           rubber: { value: "cubic-bezier(0.34, 1.56, 0.64, 1)" },
           rubberHeavy: { value: "cubic-bezier(0.22, 1.80, 0.50, 1)" },
           reluctant: { value: "cubic-bezier(0.68, -0.20, 0.27, 1.20)" },
+        },
+        rotations: {
+          sm: { value: "1.2deg" },
+          md: { value: "1.5deg" },
+          lg: { value: "1.8deg" },
+          xl: { value: "2deg" },
         },
         animations: {
           fadeIn: { value: "fadeIn {durations.normal} {easings.out}" },
@@ -257,6 +269,46 @@ export default defineConfig({
               value: { base: "{colors.color.cyan}", _light: "{colors.color.tealDeep}", _white: "{colors.color.tealDeep}" },
             },
           },
+          overlay: {
+            light: {
+              value: {
+                base: "rgba(0, 0, 0, 0.35)",
+                _light: "rgba(0, 0, 0, 0.2)",
+                _white: "rgba(0, 0, 0, 0.15)",
+              },
+            },
+            medium: {
+              value: {
+                base: "rgba(10, 10, 11, 0.75)",
+                _light: "rgba(10, 10, 11, 0.65)",
+                _white: "rgba(10, 10, 11, 0.6)",
+              },
+            },
+            heavy: {
+              value: {
+                base: "rgba(0, 0, 0, 0.8)",
+                _light: "rgba(0, 0, 0, 0.6)",
+                _white: "rgba(0, 0, 0, 0.5)",
+              },
+            },
+            mist: {
+              value: {
+                base: "rgba(255, 255, 255, 0.7)",
+                _light: "rgba(255, 255, 255, 0.5)",
+                _white: "rgba(255, 255, 255, 0.3)",
+              },
+            },
+            mistFaint: {
+              value: {
+                base: "rgba(255, 255, 255, 0.5)",
+                _light: "rgba(255, 255, 255, 0.3)",
+                _white: "rgba(255, 255, 255, 0.15)",
+              },
+            },
+          },
+          stroke: {
+            value: { base: "#0A0A0B", _light: "#0A0A0B", _white: "#0A0A0B" },
+          },
         },
         shadows: {
           sm: {
@@ -271,6 +323,12 @@ export default defineConfig({
           // Off-register ink shadow for emphasis elements (modals, primary buttons)
           inkOffset: {
             value: { base: "2px 3px 0 {colors.canvas.ink}", _light: "2px 3px 0 #6B6155", _white: "2px 3px 0 #6E6E78" },
+          },
+          inkOffsetHover: {
+            value: "4px 6px 0 {colors.bg.canvas}",
+          },
+          textGlow: {
+            value: "0 2px 20px rgba(0, 0, 0, 0.8)",
           },
         },
       },
@@ -463,6 +521,12 @@ export default defineConfig({
           "50%": { transform: "translate(-1%, 3%)" },
           "70%": { transform: "translate(2%, -2%)" },
           "90%": { transform: "translate(-3%, 1%)" },
+        },
+        // Card wobble — hover lift with tilt
+        cardWobble: {
+          "0%": { transform: "translateY(0) rotate(var(--tilt)) scale(1)" },
+          "40%": { transform: "translateY(-10px) rotate(calc(var(--tilt) * -0.6)) scale(1.03)" },
+          "100%": { transform: "translateY(-6px) rotate(0.5deg) scale(1.02)" },
         },
       },
     },
