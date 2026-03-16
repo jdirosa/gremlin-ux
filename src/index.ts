@@ -45,6 +45,21 @@ export type {
   AutocompleteCreateProps,
 } from "./components/autocomplete";
 
+export { Section } from "./components/section";
+export type { SectionProps } from "./components/section";
+
+export { Card } from "./components/card";
+export type { CardProps } from "./components/card";
+
+export { Badge } from "./components/badge";
+export type { BadgeProps } from "./components/badge";
+
+export { Icon } from "./components/icon";
+export type { IconProps } from "./components/icon";
+
+export { Divider } from "./components/divider";
+export type { DividerProps } from "./components/divider";
+
 // ── Layout ───────────────────────────────────────────────────────────
 export { Box, Stack, HStack, Grid, Container, Text, Heading } from "./components/layout";
 export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, TextProps, HeadingProps, SpacingToken, RadiiToken, ContainerSize } from "./components/layout";
@@ -52,6 +67,13 @@ export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, Text
 // ── Recipes ───────────────────────────────────────────────────────────
 export { entranceRecipe } from "./recipes";
 export type { EntranceVariantProps } from "./recipes";
+
+export { sectionRecipe, type SectionVariantProps } from "./components/section";
+export { cardRecipe, type CardVariantProps } from "./components/card";
+export { badgeRecipe, type BadgeVariantProps } from "./components/badge";
+export { iconRecipe, type IconVariantProps } from "./components/icon";
+export { dividerRecipe, type DividerVariantProps } from "./components/divider";
+export { headingRecipe, type HeadingVariantProps } from "./components/layout/heading.recipe";
 
 // ── Tokens ───────────────────────────────────────────────────────────
 export { token } from "./tokens";
