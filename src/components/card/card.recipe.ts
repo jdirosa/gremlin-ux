@@ -52,6 +52,13 @@ export const cardRecipe = cva({
       lg: { p: "6" },
       xl: { p: "8" },
     },
+    align: {
+      center: { textAlign: "center" },
+      left: { textAlign: "left" },
+    },
+    fullHeight: {
+      true: { height: "100%" },
+    },
   },
   compoundVariants: [
     { tilt: "sm", tiltDirection: "right", css: { transform: "rotate(token(rotations.sm))", "--tilt": "token(rotations.sm)" } },

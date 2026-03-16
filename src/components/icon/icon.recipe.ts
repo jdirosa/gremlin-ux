@@ -24,6 +24,23 @@ export const iconRecipe = cva({
       muted:   { color: "fg.muted" },
       accent:  { color: "accent" },
     },
+    boxed: {
+      true: {
+        borderWidth: "medium",
+        borderStyle: "solid",
+        borderColor: "border",
+        bg: "bg.subtle",
+      },
+    },
+    boxSize: {
+      sm: { width: "8", height: "8", minWidth: "8" },
+      md: { width: "10", height: "10", minWidth: "10" },
+      lg: { width: "12", height: "12", minWidth: "12" },
+    },
+    shape: {
+      square: { borderRadius: "md" },
+      circle: { borderRadius: "full" },
+    },
   },
-  defaultVariants: { size: "md", color: "current" },
+  defaultVariants: { size: "md", color: "current", shape: "square" },
 });
