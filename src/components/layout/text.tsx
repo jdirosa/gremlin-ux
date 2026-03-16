@@ -21,6 +21,12 @@ export type TextProps = {
   align?: TextAlign;
   font?: TextFont;
   italic?: boolean;
+  mb?: string;
+  mt?: string;
+  mx?: string;
+  maxWidth?: string;
+  /** Shorthand for textAlign: "center" + mx: "auto". Explicit mx overrides center's mx. */
+  center?: boolean;
 } & ComponentPropsWithoutRef<"p">;
 
 const colorMap = {
@@ -35,7 +41,7 @@ const colorMap = {
 } as const;
 
 export const Text = forwardRef<HTMLElement, TextProps>(
-  function Text({ asChild, as = "p", size, color, weight, lineHeight, align, font, italic, className, ...rest }, ref) {
+  function Text({ asChild, as = "p", size, color, weight, lineHeight, align, font, italic, mb, mt, mx, maxWidth, center, className, ...rest }, ref) {
     const Comp = asChild ? Slot : as;
     return createElement(Comp, {
       ref,
@@ -48,6 +54,12 @@ export const Text = forwardRef<HTMLElement, TextProps>(
           ...(lineHeight != null && { lineHeight }),
           ...(align != null && { textAlign: align }),
           ...(italic && { fontStyle: "italic" }),
+          ...(center && { textAlign: "center" }),
+          ...(center && mx == null && { mx: "auto" }),
+          ...(mb != null && { mb }),
+          ...(mt != null && { mt }),
+          ...(mx != null && { mx }),
+          ...(maxWidth != null && { maxWidth }),
         }),
         className,
       ),

@@ -24,11 +24,15 @@ export interface HeadingProps extends Omit<ComponentPropsWithoutRef<"h1">, "colo
   color?: "default" | "muted" | "subtle" | "accent";
   align?: "left" | "center" | "right";
   asChild?: boolean;
+  mb?: string;
+  mt?: string;
+  mx?: string;
+  textShadow?: "textGlow";
 }
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
   function Heading(
-    { size, level, stroke, color = "default", align, asChild, className, children, ...rest },
+    { size, level, stroke, color = "default", align, asChild, mb, mt, mx, textShadow, className, children, ...rest },
     ref,
   ) {
     const resolvedLevel = level ?? (size ? sizeToLevel[size] : 2);
@@ -38,6 +42,10 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
     const inlineClass = css({
       color: colorMap[color],
       ...(align != null && { textAlign: align }),
+      ...(mb != null && { mb }),
+      ...(mt != null && { mt }),
+      ...(mx != null && { mx }),
+      ...(textShadow != null && { textShadow }),
     });
 
     return createElement(
