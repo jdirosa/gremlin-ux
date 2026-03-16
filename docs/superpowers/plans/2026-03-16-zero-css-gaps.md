@@ -914,11 +914,28 @@ Remove the raw `<textarea>` with inline css() and replace with:
 </CodeBlock>
 ```
 
-- [ ] **Step 11: Remove css import if no longer needed**
+- [ ] **Step 11: Fix Atom/Molecule/Organism badges in "What Ships" section**
+
+The tier badges ("Atom", "Molecule", "Organism", "Primitive") in the component cards are stretching full-width and look like input fields instead of badges. Two issues:
+
+1. Badge `width: "fit-content"` was added to the recipe but needs to be verified in the built output
+2. The cards should use `align="center"` and the Badge should be visually centered
+
+Ensure each card in the "What Ships" grid uses:
+```tsx
+<Card interactive tilt={...} tiltDirection={...} padding="md" align="center" title={comp.name}>
+  <Badge size="sm" variant="outline">{comp.tier}</Badge>
+  <Text size="xs" color="muted" lineHeight="relaxed">{comp.desc}</Text>
+</Card>
+```
+
+With Card's `title` prop rendering the heading, and Badge rendering at its intrinsic `fit-content` width (not stretching). If Badge still stretches in a centered flex context, add `alignSelf: "center"` to the Badge recipe base styles.
+
+- [ ] **Step 12: Remove css import if no longer needed**
 
 If all `css()` calls are eliminated from design system component usage, remove the `css` import or verify only structural page-level uses remain (Vignette, SmokeEffect positioning -- these are page-specific decorative elements, not design system gaps).
 
-- [ ] **Step 12: Verify build and visual regression**
+- [ ] **Step 13: Verify build and visual regression**
 
 ```bash
 cd ~/repos/gremlin-ui && npm run build
@@ -926,7 +943,7 @@ cd ~/repos/gremlin-ui && npm run build
 
 Open http://localhost:3000/projects/gremlin-ui/ and verify every section matches the pre-refactor appearance.
 
-- [ ] **Step 13: Commit**
+- [ ] **Step 14: Commit**
 
 ```bash
 cd ~/repos/gremlin-ui && git add src/landing-page.tsx && git commit -m "refactor: zero-CSS landing page using design system components exclusively"
