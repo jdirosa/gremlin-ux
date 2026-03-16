@@ -60,6 +60,21 @@ export type { IconProps } from "./components/icon";
 export { Divider } from "./components/divider";
 export type { DividerProps } from "./components/divider";
 
+export { SectionHeader } from "./components/section-header";
+export type { SectionHeaderProps } from "./components/section-header";
+
+export { Highlight } from "./components/highlight";
+export type { HighlightProps } from "./components/highlight";
+
+export { CodeBlock } from "./components/code-block";
+export type { CodeBlockProps } from "./components/code-block";
+
+export { Textarea } from "./components/textarea";
+export type { TextareaProps } from "./components/textarea";
+
+export { Quote } from "./components/quote";
+export type { QuoteProps } from "./components/quote";
+
 // ── Layout ───────────────────────────────────────────────────────────
 export { Box, Stack, HStack, Grid, Container, Text, Heading } from "./components/layout";
 export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, TextProps, HeadingProps, SpacingToken, RadiiToken, ContainerSize } from "./components/layout";
@@ -74,6 +89,9 @@ export { badgeRecipe, type BadgeVariantProps } from "./components/badge";
 export { iconRecipe, type IconVariantProps } from "./components/icon";
 export { dividerRecipe, type DividerVariantProps } from "./components/divider";
 export { headingRecipe, type HeadingVariantProps } from "./components/layout/heading.recipe";
+export { highlightRecipe, type HighlightVariantProps } from "./components/highlight";
+export { codeBlockRecipe, type CodeBlockVariantProps } from "./components/code-block";
+export { textareaRecipe, type TextareaVariantProps } from "./components/textarea";
 
 // ── Tokens ───────────────────────────────────────────────────────────
 export { token } from "./tokens";
