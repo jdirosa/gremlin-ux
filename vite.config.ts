@@ -21,6 +21,7 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, "src/index.ts"),
+        preset: resolve(__dirname, "src/preset.ts"),
       },
       formats: ["es", "cjs"],
     },
@@ -31,6 +32,7 @@ export default defineConfig({
         "react/jsx-runtime",
         "@radix-ui/react-slot",
         "@floating-ui/react-dom",
+        "@pandacss/dev",
       ],
       output: {
         preserveModules: true,
