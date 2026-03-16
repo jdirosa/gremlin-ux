@@ -416,8 +416,7 @@ import { cva } from "@styled-system/css";
 export const headingRecipe = cva({
   base: {
     fontFamily: "heading",
-    fontWeight: "bold",
-    lineHeight: "1.1",
+    lineHeight: "tight",
   },
   variants: {
     size: {
