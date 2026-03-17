@@ -14,7 +14,7 @@ export const Quote = forwardRef<HTMLQuoteElement, QuoteProps>(
   function Quote({ children, author, source, avatar, className, ...rest }, ref) {
     return (
       <blockquote ref={ref} className={className} {...rest}>
-        <Stack gap="5" justify="between">
+        <Stack gap="xl" justify="between">
           <div>
             <div className={quoteMarkStyles()}>&ldquo;</div>
             <Text size="lg" color="default" lineHeight="relaxed" italic>

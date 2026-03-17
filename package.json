@@ -16,7 +16,8 @@
       "types": "./dist/preset.d.ts",
       "import": "./dist/preset.js",
       "require": "./dist/preset.cjs"
-    }
+    },
+    "./styles.css": "./dist/styles.css"
   },
   "files": [
     "dist",
@@ -25,7 +26,7 @@
   ],
   "scripts": {
     "dev": "panda codegen && storybook dev -p 6006",
-    "build": "panda codegen && vite build",
+    "build": "panda codegen && panda cssgen && vite build && cp styled-system/styles.css dist/styles.css",
     "build:storybook": "panda codegen && storybook build",
     "test": "vitest run",
     "test:watch": "vitest",

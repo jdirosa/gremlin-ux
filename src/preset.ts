@@ -20,6 +20,13 @@ export const gremlinPreset = definePreset({
   },
 
   theme: {
+    breakpoints: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
     extend: {
       // ── Primitive Tokens ──────────────────────────────────────
       tokens: {
@@ -103,6 +110,9 @@ export const gremlinPreset = definePreset({
           },
           prose: { value: "640px" },
           proseNarrow: { value: "560px" },
+          8: { value: "32px" },
+          10: { value: "40px" },
+          12: { value: "48px" },
         },
         radii: {
           sm: { value: "8px" },

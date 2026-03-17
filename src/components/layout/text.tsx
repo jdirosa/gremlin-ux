@@ -1,13 +1,15 @@
-import { forwardRef, createElement, type ComponentPropsWithoutRef } from "react";
+import { forwardRef, createElement, type ComponentPropsWithoutRef, type CSSProperties } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { css, cx } from "@styled-system/css";
+import type { SpaceScale } from "./layout.types";
+import { spaceMap } from "./layout.types";
 
 type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 type TextColor = "default" | "muted" | "subtle" | "accent" | "error" | "success" | "info" | "warning";
 type TextWeight = "normal" | "medium" | "semibold" | "bold";
 type TextLineHeight = "tight" | "normal" | "relaxed";
 type TextAlign = "left" | "center" | "right";
-type TextFont = "body" | "mono";
+type TextFont = "body" | "heading" | "mono";
 type TextElement = "p" | "span" | "label";
 
 export type TextProps = {
@@ -21,9 +23,9 @@ export type TextProps = {
   align?: TextAlign;
   font?: TextFont;
   italic?: boolean;
-  mb?: string;
-  mt?: string;
-  mx?: string;
+  mb?: SpaceScale;
+  mt?: SpaceScale;
+  mx?: SpaceScale;
   maxWidth?: string;
   /** Shorthand for textAlign: "center" + mx: "auto". Explicit mx overrides center's mx. */
   center?: boolean;
@@ -41,8 +43,21 @@ const colorMap = {
 } as const;
 
 export const Text = forwardRef<HTMLElement, TextProps>(
-  function Text({ asChild, as = "p", size, color, weight, lineHeight, align, font, italic, mb, mt, mx, maxWidth, center, className, ...rest }, ref) {
+  function Text({ asChild, as = "p", size, color, weight, lineHeight, align, font, italic, mb, mt, mx, maxWidth, center, className, style, ...rest }, ref) {
     const Comp = asChild ? Slot : as;
+
+    const marginStyle: CSSProperties = {};
+    if (mb != null) marginStyle.marginBottom = `var(--spacing-${spaceMap[mb]})`;
+    if (mt != null) marginStyle.marginTop = `var(--spacing-${spaceMap[mt]})`;
+    if (mx != null) {
+      marginStyle.marginInlineStart = `var(--spacing-${spaceMap[mx]})`;
+      marginStyle.marginInlineEnd = `var(--spacing-${spaceMap[mx]})`;
+    } else if (center) {
+      marginStyle.marginInlineStart = "auto";
+      marginStyle.marginInlineEnd = "auto";
+    }
+    if (maxWidth != null) marginStyle.maxWidth = maxWidth;
+
     return createElement(Comp, {
       ref,
       className: cx(
@@ -55,14 +70,10 @@ export const Text = forwardRef<HTMLElement, TextProps>(
           ...(align != null && { textAlign: align }),
           ...(italic && { fontStyle: "italic" }),
           ...(center && { textAlign: "center" }),
-          ...(center && mx == null && { mx: "auto" }),
-          ...(mb != null && { mb }),
-          ...(mt != null && { mt }),
-          ...(mx != null && { mx }),
-          ...(maxWidth != null && { maxWidth }),
         }),
         className,
       ),
+      style: { ...marginStyle, ...style },
       ...rest,
     });
   },

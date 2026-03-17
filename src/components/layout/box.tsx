@@ -1,13 +1,14 @@
 import { forwardRef, type ComponentPropsWithoutRef } from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { css, cx } from "@styled-system/css";
-import type { SpacingToken, RadiiToken } from "./layout.types";
+import { cx } from "@styled-system/css";
+import type { SpaceScale, RadiiToken } from "./layout.types";
+import { boxRecipe } from "./box.recipe";
 
 export type BoxProps = {
   asChild?: boolean;
-  padding?: SpacingToken;
-  paddingX?: SpacingToken;
-  paddingY?: SpacingToken;
+  padding?: SpaceScale;
+  paddingX?: SpaceScale;
+  paddingY?: SpaceScale;
   borderRadius?: RadiiToken;
 } & ComponentPropsWithoutRef<"div">;
 
@@ -17,15 +18,7 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
     return (
       <Comp
         ref={ref}
-        className={cx(
-          css({
-            ...(padding != null && { p: padding }),
-            ...(paddingX != null && { px: paddingX }),
-            ...(paddingY != null && { py: paddingY }),
-            ...(borderRadius != null && { borderRadius }),
-          }),
-          className,
-        )}
+        className={cx(boxRecipe({ padding, paddingX, paddingY, borderRadius }), className)}
         {...rest}
       />
     );

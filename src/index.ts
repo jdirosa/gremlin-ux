@@ -48,6 +48,9 @@ export type {
 export { Section } from "./components/section";
 export type { SectionProps } from "./components/section";
 
+export { ParallaxLayout } from "./components/parallax-layout";
+export type { ParallaxLayoutProps } from "./components/parallax-layout";
+
 export { Card } from "./components/card";
 export type { CardProps } from "./components/card";
 
@@ -75,9 +78,12 @@ export type { TextareaProps } from "./components/textarea";
 export { Quote } from "./components/quote";
 export type { QuoteProps } from "./components/quote";
 
+export { Animate } from "./components/animate";
+export type { AnimateProps } from "./components/animate";
+
 // ── Layout ───────────────────────────────────────────────────────────
 export { Box, Stack, HStack, Grid, Container, Text, Heading } from "./components/layout";
-export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, TextProps, HeadingProps, SpacingToken, RadiiToken, ContainerSize } from "./components/layout";
+export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, TextProps, HeadingProps, SpaceScale, RadiiToken, ContainerSize } from "./components/layout";
 
 // ── Recipes ───────────────────────────────────────────────────────────
 export { entranceRecipe } from "./recipes";

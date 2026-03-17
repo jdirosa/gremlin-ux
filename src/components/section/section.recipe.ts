@@ -10,10 +10,20 @@ export const sectionRecipe = cva({
   },
   variants: {
     bg: {
+      transparent: {},
       canvas:   { bg: "bg.canvas" },
       surface:  { bg: "bg.surface" },
       emphasis: { bg: "bg.emphasis" },
     },
+    height: {
+      auto: {},
+      viewport: {
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+    },
   },
-  defaultVariants: { bg: "canvas" },
+  defaultVariants: { bg: "canvas", height: "auto" },
 });

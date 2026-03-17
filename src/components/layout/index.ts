@@ -19,4 +19,4 @@ export type { TextProps } from "./text";
 export { Heading } from "./heading";
 export type { HeadingProps } from "./heading";
 
-export type { SpacingToken, RadiiToken, ContainerSize } from "./layout.types";
+export type { SpaceScale, RadiiToken, ContainerSize } from "./layout.types";

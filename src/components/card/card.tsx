@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef } from "react";
+import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { cx } from "@styled-system/css";
 import { Slot } from "@radix-ui/react-slot";
 import { cardRecipe, type CardVariantProps } from "./card.recipe";
@@ -11,7 +11,7 @@ export interface CardProps extends Omit<ComponentPropsWithoutRef<"div">, "color"
   padding?: CardVariantProps["padding"];
   align?: CardVariantProps["align"];
   fullHeight?: CardVariantProps["fullHeight"];
-  title?: string;
+  title?: ReactNode;
   asChild?: boolean;
 }
 
@@ -25,7 +25,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 
     return (
       <Comp ref={ref} className={cx(recipeClass, className)} {...rest}>
-        {title != null && <Heading level={4} size="label" mb="1">{title}</Heading>}
+        {title != null && <Heading level={4} size="label" mb="xs">{title}</Heading>}
         {children}
       </Comp>
     );
