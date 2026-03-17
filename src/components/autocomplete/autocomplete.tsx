@@ -70,6 +70,7 @@ interface AutocompleteContextValue {
   triggerId: string;
   triggerRef: React.RefObject<HTMLElement | null>;
   floatingStyles: React.CSSProperties;
+  isPositioned: boolean;
   setFloatingRef: (node: HTMLElement | null) => void;
   setReferenceRef: (node: HTMLElement | null) => void;
 }
@@ -247,7 +248,7 @@ function AutocompleteRoot(props: AutocompleteProps) {
   }, []);
 
   // Floating UI
-  const { refs, floatingStyles } = useFloating({
+  const { refs, floatingStyles, isPositioned } = useFloating({
     open,
     placement,
     middleware: [
@@ -296,6 +297,7 @@ function AutocompleteRoot(props: AutocompleteProps) {
       triggerId,
       triggerRef,
       floatingStyles,
+      isPositioned,
       setFloatingRef: refs.setFloating,
       setReferenceRef: refs.setReference,
     }),
@@ -312,6 +314,7 @@ function AutocompleteRoot(props: AutocompleteProps) {
       handleSearchTermChange,
       highlightedIndex,
       setHighlightedIndex,
+      isPositioned,
       registerItem,
       unregisterItem,
       getItemId,
@@ -400,6 +403,7 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
       toggleValue,
       onSearchTermChange,
       floatingStyles,
+      isPositioned,
       setFloatingRef,
       triggerRef,
     } = useAutocompleteContext();
@@ -536,7 +540,7 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
         ref={mergedRef}
         className={cx(autocompleteContentStyles, className)}
         data-state="open"
-        style={floatingStyles}
+        style={{ ...floatingStyles, visibility: isPositioned ? "visible" : "hidden" }}
         onKeyDown={handleKeyDown}
         {...rest}
       >
