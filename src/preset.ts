@@ -169,6 +169,7 @@ export const gremlinPreset = definePreset({
           rubberHeavy: { value: "cubic-bezier(0.22, 1.80, 0.50, 1)" },
           reluctant: { value: "cubic-bezier(0.68, -0.20, 0.27, 1.20)" },
         },
+        // @ts-expect-error — Panda processes custom token categories but TS types don't include them
         rotations: {
           sm: { value: "1.2deg" },
           md: { value: "1.5deg" },
