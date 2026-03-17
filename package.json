@@ -1,6 +1,6 @@
 {
   "name": "@gremlin-ui/react",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "description": "Dark rubber hose design system — React 19 + Panda CSS",
   "type": "module",
   "main": "./dist/index.cjs",
