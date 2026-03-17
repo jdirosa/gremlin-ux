@@ -1,4 +1,4 @@
-# Gremlin UI — Machine-Readable API Reference for LLMs
+# Gremlin UI -- Machine-Readable API Reference for LLMs
 # This structured reference enables AI assistants to generate
 # design-system-compliant code on the first try.
 
@@ -71,6 +71,23 @@ components:
           <TextInput type="email" placeholder="you@company.com" />
         </FormField>
 
+  Textarea:
+    import: "@gremlin-ui/react"
+    description: "Multi-line text input with FormField integration"
+    props:
+      disabled:
+        type: "boolean"
+        description: "Disables the textarea (uses aria-disabled for accessibility)"
+    accessibility:
+      - "Auto-wired via FormField context (id, aria-invalid, aria-describedby, aria-required)"
+      - "Uses aria-disabled instead of HTML disabled (keeps focusable)"
+    pattern: "Always wrap in FormField for label association and error handling"
+    examples:
+      basic: |
+        <FormField label="Message" required>
+          <Textarea placeholder="Write your message..." />
+        </FormField>
+
   FormField:
     import: "@gremlin-ui/react"
     props:
@@ -91,7 +108,7 @@ components:
       - "Auto-generates id and wires htmlFor on label"
       - "Passes aria-invalid, aria-describedby, aria-required via React Context"
       - "Error message has role=alert for screen reader announcement"
-    pattern: "Wrap ANY form input — TextInput, Autocomplete trigger, etc."
+    pattern: "Wrap ANY form input -- TextInput, Textarea, Autocomplete trigger, etc."
     examples:
       basic: |
         <FormField label="Name" required>
@@ -216,6 +233,591 @@ components:
           </Autocomplete.Content>
         </Autocomplete>
 
+  Toast:
+    import: "@gremlin-ui/react"
+    description: "Toast notification system with auto-dismiss, pause on hover, and screen reader support"
+    parts:
+      ToastProvider:
+        description: "Wraps your app to enable toast notifications. Renders a portal with toast container."
+        props:
+          position:
+            type: "'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center'"
+            default: "bottom-right"
+          max:
+            type: "number"
+            default: "5"
+            description: "Maximum number of visible toasts"
+          children:
+            type: "ReactNode"
+            required: true
+      useToast:
+        description: "Returns a toast function for creating notifications. Must be used within ToastProvider."
+        returns: "ToastFunction"
+      ToastOptions:
+        description: "Options passed to the toast function"
+        props:
+          variant:
+            type: "'info' | 'success' | 'warning' | 'error'"
+            required: true
+            description: "Visual variant determines icon, accent color, and live region politeness"
+          title:
+            type: "string"
+            required: true
+            description: "Bold title text"
+          description:
+            type: "string"
+            description: "Optional description text below the title"
+          duration:
+            type: "number"
+            description: "Auto-dismiss duration in ms. Default: 5000 (error: 8000). Use Infinity for persistent."
+      ToastFunction:
+        description: "Call to create a toast. Also has .dismiss(id) and .dismissAll() methods."
+        methods:
+          - "toast(options: ToastOptions): string -- returns toast id"
+          - "toast.dismiss(id: string): void -- dismiss a specific toast"
+          - "toast.dismissAll(): void -- dismiss all visible toasts"
+    accessibility:
+      - "aria-live=polite for info/success/warning toasts"
+      - "aria-live=assertive for error toasts"
+      - "Pause auto-dismiss timer on hover and focus"
+      - "Each toast has a close button with aria-label='Dismiss'"
+      - "Progress bar is aria-hidden"
+    examples:
+      setup: |
+        <ToastProvider position="bottom-right">
+          <App />
+        </ToastProvider>
+      usage: |
+        const toast = useToast();
+        toast({ variant: "success", title: "Saved!" });
+        toast({ variant: "error", title: "Failed", description: "Check your connection." });
+        const id = toast({ variant: "info", title: "Uploading...", duration: Infinity });
+        toast.dismiss(id);
+
+  Nav:
+    import: "@gremlin-ui/react"
+    description: "Sidebar navigation with sections. Compound component pattern."
+    compound_parts:
+      - "Nav (root)"
+      - "Nav.Section"
+      - "Nav.Item"
+    parts:
+      Nav:
+        description: "Root container. Renders a <nav> element with vertical flex layout."
+        props: "Standard nav element props"
+      Nav.Section:
+        description: "Groups nav items under an uppercase label"
+        props:
+          title:
+            type: "string"
+            required: true
+            description: "Section heading displayed as uppercase label"
+          children:
+            type: "ReactNode"
+            required: true
+      Nav.Item:
+        description: "Individual navigation item"
+        props:
+          active:
+            type: "boolean"
+            description: "Highlights the item as the current page"
+          badge:
+            type: "ReactNode"
+            description: "Content rendered on the right side (e.g., count badge)"
+          asChild:
+            type: "boolean"
+            description: "Merge props onto child element instead of rendering a <button>"
+    examples:
+      sidebar: |
+        <Nav>
+          <Nav.Section title="Getting Started">
+            <Nav.Item active>Introduction</Nav.Item>
+            <Nav.Item>Installation</Nav.Item>
+          </Nav.Section>
+          <Nav.Section title="Components">
+            <Nav.Item badge={<Badge size="sm">New</Badge>}>Button</Nav.Item>
+            <Nav.Item>TextInput</Nav.Item>
+          </Nav.Section>
+        </Nav>
+
+  Animate:
+    import: "@gremlin-ui/react"
+    description: "Scroll-triggered entrance animation. Uses IntersectionObserver to detect viewport entry, animates once, then stays visible. All motion respects prefers-reduced-motion."
+    props:
+      animation:
+        type: "'up' | 'down' | 'left' | 'right' | 'scale' | 'fade'"
+        default: "up"
+        description: "Direction the element enters from"
+      feel:
+        type: "'smooth' | 'rubber'"
+        default: "smooth"
+        description: "Animation character. Smooth uses CSS transitions, rubber uses keyframe bounce."
+      delay:
+        type: "string"
+        description: "CSS delay value (e.g. '200ms', '0.5s')"
+      duration:
+        type: "string"
+        description: "Override animation/transition duration"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    accessibility:
+      - "All motion gated behind prefers-reduced-motion: no-preference"
+      - "Animate-once pattern: element stays visible after entrance"
+    examples:
+      basic: '<Animate animation="up">Content slides up</Animate>'
+      bouncy: '<Animate animation="scale" feel="rubber">Bouncy entrance</Animate>'
+      polymorphic: '<Animate animation="fade" asChild><Card>...</Card></Animate>'
+      staggered: |
+        <Animate animation="up" delay="0ms">First</Animate>
+        <Animate animation="up" delay="100ms">Second</Animate>
+        <Animate animation="up" delay="200ms">Third</Animate>
+
+  Card:
+    import: "@gremlin-ui/react"
+    description: "Content card with optional tilt, hover interaction, and title"
+    props:
+      interactive:
+        type: "boolean"
+        description: "Enables hover wobble animation and shadow transitions"
+      tilt:
+        type: "'none' | 'sm' | 'md' | 'lg' | 'xl'"
+        default: "none"
+        description: "Static rotation amount"
+      tiltDirection:
+        type: "'left' | 'right'"
+        default: "right"
+        description: "Direction of the tilt rotation"
+      padding:
+        type: "'none' | 'sm' | 'md' | 'lg' | 'xl'"
+        default: "lg"
+        description: "Internal padding"
+      title:
+        type: "ReactNode"
+        description: "Renders a Heading (level 4, label size) above content"
+      align:
+        type: "'left' | 'center'"
+        description: "Text alignment within the card"
+      fullHeight:
+        type: "boolean"
+        description: "Sets height: 100% for grid layouts"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    examples:
+      basic: |
+        <Card title="Feature">
+          <Text>Card content here</Text>
+        </Card>
+      interactive_tilted: |
+        <Card interactive tilt="sm" tiltDirection="left">
+          <Text>Hover me for wobble effect</Text>
+        </Card>
+
+  Badge:
+    import: "@gremlin-ui/react"
+    description: "Inline label for status, categories, or counts"
+    props:
+      variant:
+        type: "'subtle' | 'outline'"
+        default: "subtle"
+        description: "Visual style of the badge"
+      size:
+        type: "'sm' | 'md'"
+        default: "md"
+      icon:
+        type: "ReactNode"
+        description: "Icon rendered before badge text (wrapped in aria-hidden span)"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+      mb:
+        type: "SpaceScale"
+        description: "Margin bottom using semantic spacing"
+    examples:
+      basic: '<Badge>Default</Badge>'
+      with_icon: '<Badge variant="outline" icon={<StarIcon />}>Featured</Badge>'
+
+  Icon:
+    import: "@gremlin-ui/react"
+    description: "Icon wrapper that sizes and colors SVG children. Always renders aria-hidden='true'."
+    props:
+      size:
+        type: "'sm' | 'md' | 'lg'"
+        default: "md"
+        description: "Icon font size"
+      color:
+        type: "'current' | 'muted' | 'accent'"
+        default: "current"
+        description: "Semantic color applied to the icon"
+      boxed:
+        type: "boolean"
+        description: "Adds border and subtle background"
+      boxSize:
+        type: "'sm' | 'md' | 'lg'"
+        description: "Fixed container size when boxed"
+      shape:
+        type: "'square' | 'circle'"
+        default: "square"
+        description: "Border radius when boxed"
+    accessibility:
+      - "Always renders aria-hidden='true' since icons are decorative"
+      - "Pair with visible text or aria-label on the parent for meaning"
+    examples:
+      basic: '<Icon size="lg"><SearchSvg /></Icon>'
+      boxed: '<Icon boxed boxSize="md" shape="circle" color="accent"><CheckSvg /></Icon>'
+
+  Divider:
+    import: "@gremlin-ui/react"
+    description: "Horizontal or vertical separator line"
+    props:
+      variant:
+        type: "'solid' | 'dashed' | 'squiggle'"
+        default: "solid"
+        description: "Visual style. Squiggle renders an SVG wavy line."
+      orientation:
+        type: "'horizontal' | 'vertical'"
+        default: "horizontal"
+    accessibility:
+      - "Renders role='separator' with aria-orientation"
+      - "Squiggle variant adds aria-hidden='true' on the SVG"
+    examples:
+      basic: '<Divider />'
+      squiggle: '<Divider variant="squiggle" />'
+
+  Section:
+    import: "@gremlin-ui/react"
+    description: "Page section with background color and optional squiggle separator between sections"
+    props:
+      bg:
+        type: "'transparent' | 'canvas' | 'surface' | 'emphasis'"
+        default: "canvas"
+        description: "Section background color"
+      height:
+        type: "'auto' | 'viewport'"
+        default: "auto"
+        description: "Auto for content height, viewport for full-screen hero sections"
+      containerMaxWidth:
+        type: "'sm' | 'md' | 'lg' | 'xl' | 'full'"
+        default: "lg"
+        description: "Max width of the inner Container"
+      separator:
+        type: "'squiggle'"
+        description: "Renders an SVG squiggle divider at the bottom of the section"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    examples:
+      basic: |
+        <Section bg="surface" separator="squiggle">
+          <SectionHeader title="Features" subtitle="What makes it special" />
+          <Grid cols={3} gap="lg">
+            <Card>...</Card>
+          </Grid>
+        </Section>
+
+  SectionHeader:
+    import: "@gremlin-ui/react"
+    description: "Centered heading and subtitle pair for page sections"
+    props:
+      title:
+        type: "string"
+        required: true
+        description: "Heading text"
+      subtitle:
+        type: "ReactNode"
+        description: "Description text below the heading"
+      stroke:
+        type: "boolean"
+        default: "true"
+        description: "Applies text stroke effect to the heading"
+      glow:
+        type: "boolean"
+        description: "Applies text glow shadow to the heading"
+      level:
+        type: "1 | 2 | 3 | 4 | 5 | 6"
+        default: "2"
+        description: "HTML heading level (h1-h6)"
+      mb:
+        type: "SpaceScale"
+        default: "xl"
+        description: "Margin bottom using semantic spacing"
+    examples:
+      basic: '<SectionHeader title="Features" subtitle="Everything you need" />'
+      hero: '<SectionHeader title="Gremlin UI" subtitle="A design system with personality" level={1} glow />'
+
+  Highlight:
+    import: "@gremlin-ui/react"
+    description: "Inline text highlight with colored background"
+    props:
+      bg:
+        type: "'medium' | 'heavy' | 'subtle'"
+        default: "medium"
+        description: "Background intensity"
+    examples:
+      basic: '<Text>This is <Highlight>important</Highlight> text</Text>'
+      subtle: '<Highlight bg="subtle">Lightly highlighted</Highlight>'
+
+  CodeBlock:
+    import: "@gremlin-ui/react"
+    description: "Styled container for code snippets"
+    props:
+      align:
+        type: "'left' | 'center'"
+        default: "left"
+        description: "Text alignment within the block"
+    examples:
+      basic: |
+        <CodeBlock>
+          <pre><code>npm install @gremlin-ui/react</code></pre>
+        </CodeBlock>
+
+  Quote:
+    import: "@gremlin-ui/react"
+    description: "Block quote with author attribution"
+    props:
+      children:
+        type: "ReactNode"
+        required: true
+        description: "Quote content text"
+      author:
+        type: "string"
+        required: true
+        description: "Attribution name"
+      source:
+        type: "string"
+        description: "Source or role text displayed below author"
+      avatar:
+        type: "ReactNode"
+        description: "Avatar element rendered beside attribution"
+    examples:
+      basic: |
+        <Quote author="Dan Abramov" source="React Core Team">
+          The best APIs are the ones you don't need to learn.
+        </Quote>
+
+  ParallaxLayout:
+    import: "@gremlin-ui/react"
+    description: "Fixed background with scrollable foreground content"
+    props:
+      background:
+        type: "ReactNode"
+        required: true
+        description: "Content rendered in a fixed position behind the scroll area"
+    examples:
+      basic: |
+        <ParallaxLayout background={<GradientBackground />}>
+          <Section>...</Section>
+          <Section>...</Section>
+        </ParallaxLayout>
+
+  Box:
+    import: "@gremlin-ui/react"
+    description: "Base layout primitive with padding and border radius"
+    props:
+      padding:
+        type: "SpaceScale"
+        description: "All-side padding"
+      paddingX:
+        type: "SpaceScale"
+        description: "Horizontal padding"
+      paddingY:
+        type: "SpaceScale"
+        description: "Vertical padding"
+      borderRadius:
+        type: "'sm' | 'md' | 'lg' | 'xl' | 'full'"
+        description: "Border radius token"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    examples:
+      basic: '<Box padding="md" borderRadius="lg">Padded content</Box>'
+
+  Stack:
+    import: "@gremlin-ui/react"
+    description: "Vertical flex container with gap"
+    props:
+      gap:
+        type: "SpaceScale"
+        description: "Vertical gap between children"
+      align:
+        type: "'start' | 'center' | 'end' | 'stretch'"
+        description: "Cross-axis alignment (align-items)"
+      justify:
+        type: "'start' | 'center' | 'end' | 'between'"
+        description: "Main-axis alignment (justify-content)"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    examples:
+      basic: |
+        <Stack gap="md">
+          <Text>First</Text>
+          <Text>Second</Text>
+        </Stack>
+
+  HStack:
+    import: "@gremlin-ui/react"
+    description: "Horizontal flex container with gap"
+    props:
+      gap:
+        type: "SpaceScale"
+        description: "Horizontal gap between children"
+      align:
+        type: "'start' | 'center' | 'end' | 'stretch' | 'baseline'"
+        description: "Cross-axis alignment (align-items)"
+      justify:
+        type: "'start' | 'center' | 'end' | 'between'"
+        description: "Main-axis alignment (justify-content)"
+      wrap:
+        type: "boolean"
+        description: "Enable flex-wrap"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    examples:
+      basic: |
+        <HStack gap="sm" align="center">
+          <Icon><CheckSvg /></Icon>
+          <Text as="span">Confirmed</Text>
+        </HStack>
+
+  Grid:
+    import: "@gremlin-ui/react"
+    description: "CSS grid container with responsive columns"
+    props:
+      cols:
+        type: "1 | 2 | 3 | 4"
+        description: "Number of columns"
+      gap:
+        type: "SpaceScale"
+        description: "Grid gap"
+      align:
+        type: "'start' | 'center' | 'end' | 'stretch'"
+        description: "Vertical alignment of grid items"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    examples:
+      basic: |
+        <Grid cols={3} gap="lg">
+          <Card>One</Card>
+          <Card>Two</Card>
+          <Card>Three</Card>
+        </Grid>
+
+  Container:
+    import: "@gremlin-ui/react"
+    description: "Centered max-width container for page content"
+    props:
+      maxWidth:
+        type: "'sm' | 'md' | 'lg' | 'xl' | 'full'"
+        description: "Maximum width constraint"
+      paddingX:
+        type: "SpaceScale"
+        description: "Horizontal padding"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    examples:
+      basic: '<Container maxWidth="lg">Page content</Container>'
+
+  Text:
+    import: "@gremlin-ui/react"
+    description: "Typography primitive for body text, labels, and inline text"
+    props:
+      as:
+        type: "'p' | 'span' | 'label'"
+        default: "p"
+        description: "HTML element to render"
+      size:
+        type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'"
+        description: "Font size"
+      color:
+        type: "'default' | 'muted' | 'subtle' | 'accent' | 'error' | 'success' | 'info' | 'warning'"
+        default: "default"
+        description: "Semantic text color"
+      weight:
+        type: "'normal' | 'medium' | 'semibold' | 'bold'"
+        description: "Font weight"
+      lineHeight:
+        type: "'tight' | 'normal' | 'relaxed'"
+        description: "Line height"
+      align:
+        type: "'left' | 'center' | 'right'"
+        description: "Text alignment"
+      font:
+        type: "'body' | 'heading' | 'mono'"
+        default: "body"
+        description: "Font family"
+      italic:
+        type: "boolean"
+        description: "Italic style"
+      mb:
+        type: "SpaceScale"
+        description: "Margin bottom"
+      mt:
+        type: "SpaceScale"
+        description: "Margin top"
+      mx:
+        type: "SpaceScale"
+        description: "Horizontal margin"
+      maxWidth:
+        type: "string"
+        description: "Max width (e.g. 'prose' for readable line length)"
+      center:
+        type: "boolean"
+        description: "Shorthand for textAlign: center + mx: auto"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+    examples:
+      basic: '<Text>Paragraph text</Text>'
+      muted: '<Text color="muted" size="sm">Helper text</Text>'
+      inline: '<Text as="span" weight="bold">Bold inline</Text>'
+
+  Heading:
+    import: "@gremlin-ui/react"
+    description: "Heading typography component with size presets and text stroke"
+    props:
+      size:
+        type: "'display' | 'title' | 'subtitle' | 'label'"
+        description: "Size preset. Maps to heading level if level is not set (display=h1, title=h2, subtitle=h3, label=h4)."
+      level:
+        type: "1 | 2 | 3 | 4 | 5 | 6"
+        description: "HTML heading level. Overrides size-based level mapping."
+      stroke:
+        type: "boolean"
+        description: "Applies text stroke effect (heavy outlined look)"
+      color:
+        type: "'default' | 'muted' | 'subtle' | 'accent'"
+        default: "default"
+      align:
+        type: "'left' | 'center' | 'right'"
+        description: "Text alignment"
+      asChild:
+        type: "boolean"
+        description: "Merge props onto child element via Radix Slot"
+      mb:
+        type: "SpaceScale"
+        description: "Margin bottom"
+      mt:
+        type: "SpaceScale"
+        description: "Margin top"
+      mx:
+        type: "SpaceScale"
+        description: "Horizontal margin"
+      textShadow:
+        type: "'textGlow'"
+        description: "Text glow effect"
+      center:
+        type: "boolean"
+        description: "Center the heading text"
+    examples:
+      basic: '<Heading size="title">Page Title</Heading>'
+      hero: '<Heading size="display" stroke level={1}>Hero</Heading>'
+      label: '<Heading size="label" level={4} mb="sm">Section Label</Heading>'
+
 tokens:
   colors:
     semantic:
@@ -238,12 +840,6 @@ hooks:
     import: "@gremlin-ui/react"
     description: "Manages state that can be controlled or uncontrolled"
     usage: "Used internally by Modal, Autocomplete. Available for custom components."
-  useClickOutside:
+  useFormFieldContext:
     import: "@gremlin-ui/react"
-    description: "Calls handler on click outside referenced element"
-  useFocusTrap:
-    import: "@gremlin-ui/react"
-    description: "Traps focus within container. Used by Modal."
-  useKeyboardNavigation:
-    import: "@gremlin-ui/react"
-    description: "Arrow key navigation for list-based components"
+    description: "Reads FormField context values (id, isInvalid, isRequired, isDisabled, descriptionId, errorId). Used by TextInput, Textarea, and custom form controls."

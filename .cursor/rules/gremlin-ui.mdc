@@ -69,6 +69,198 @@ globs: ["src/**/*.tsx", "src/**/*.ts"]
 - Always wrap animations in `_motionSafe` condition for `prefers-reduced-motion` respect
 - CSS-only animations. No Framer Motion.
 
+## Nav Component
+- Compound component: `<Nav>` > `<Nav.Section>` > `<Nav.Item>`
+- `Nav.Section` takes a `title` prop for section labels
+- `Nav.Item` supports `active`, `badge`, and `asChild` props
+- Use `asChild` with your router's NavLink for active state management
+- Designed for sidebar navigation patterns
+
+### Nav example:
+```tsx
+<Nav>
+  <Nav.Section title="Overview">
+    <Nav.Item asChild active>
+      <NavLink to="/dashboard">Dashboard</NavLink>
+    </Nav.Item>
+    <Nav.Item asChild>
+      <NavLink to="/analytics">Analytics</NavLink>
+    </Nav.Item>
+  </Nav.Section>
+  <Nav.Section title="Settings">
+    <Nav.Item badge="3" asChild>
+      <NavLink to="/notifications">Notifications</NavLink>
+    </Nav.Item>
+  </Nav.Section>
+</Nav>
+```
+
+## Animate Component
+- Scroll-triggered entrance animation wrapper
+- Use for section entrances on landing pages
+- Wraps content and animates it into view when it enters the viewport
+- Props: `direction` (up, down, left, right), `delay` (stagger timing)
+- Respects `prefers-reduced-motion` automatically, no extra work needed
+
+### Animate example:
+```tsx
+<Animate direction="up">
+  <Card title="Feature One">First card animates in</Card>
+</Animate>
+<Animate direction="up" delay={100}>
+  <Card title="Feature Two">Second card staggers in</Card>
+</Animate>
+```
+
+## Card Component
+- Container with optional interactivity and tilt effects
+- Props: `interactive` (hover state), `tilt` (enable tilt effect), `tiltDirection`, `padding`, `title`
+- Use inside `<Grid>` for card layouts
+
+### Card example:
+```tsx
+<Grid columns={3} gap="4">
+  <Card title="Basic Card" padding="6">
+    <Text>Simple content card</Text>
+  </Card>
+  <Card interactive tilt tiltDirection="left" title="Interactive Card">
+    <Text>Hover for tilt effect</Text>
+  </Card>
+</Grid>
+```
+
+## Badge Component
+- Inline status labels and indicators
+- Props: `variant` (solid, outline), `size`, `icon`
+- Use inside headings, nav items, or standalone
+
+### Badge example:
+```tsx
+<HStack gap="2" align="center">
+  <Heading level={3}>Features</Heading>
+  <Badge variant="solid">New</Badge>
+</HStack>
+<Badge variant="outline" size="sm" icon={<Icon size="xs" />}>Beta</Badge>
+```
+
+## Icon Component
+- SVG icon wrapper, always renders with `aria-hidden`
+- When used standalone (not next to text), the parent element MUST have `aria-label`
+- Props: `size`, `color`, `boxed` (background container), `shape`
+
+### Icon example:
+```tsx
+<Icon size="md" color="accent">
+  <SearchSvg />
+</Icon>
+<Icon size="sm" boxed shape="circle">
+  <CheckSvg />
+</Icon>
+```
+
+## Divider Component
+- Visual separator between content sections
+- Props: `variant` (default, squiggle), `orientation` (horizontal, vertical)
+
+### Divider example:
+```tsx
+<Stack gap="6">
+  <Text>Above the line</Text>
+  <Divider />
+  <Text>Below the line</Text>
+</Stack>
+<Divider variant="squiggle" />
+```
+
+## Toast Component
+- Notification system using provider + hook pattern
+- Wrap your app root in `<ToastProvider>`, then call `useToast()` in any component
+- Toast options: `variant`, `title`, `description`
+
+### Toast example:
+```tsx
+// In app root:
+<ToastProvider>
+  <App />
+</ToastProvider>
+
+// In any component:
+const toast = useToast();
+toast({ variant: "success", title: "Saved", description: "Changes saved successfully." });
+toast({ variant: "error", title: "Error", description: "Something went wrong." });
+```
+
+## Textarea Component
+- Multi-line text input, follows the same pattern as TextInput
+- Wrap in `<FormField>` for automatic label/error/description association
+- Integrates with FormField context the same way TextInput does
+
+### Textarea example:
+```tsx
+<FormField label="Message" description="Tell us what you need">
+  <Textarea placeholder="Type your message..." />
+</FormField>
+```
+
+## Section Component
+- Full-width page section with built-in `<Container>`
+- Props: `bg` (background variant), `separator` (adds visual separator between sections)
+- Use for structuring landing pages and content pages
+
+### Section example:
+```tsx
+<Section bg="surface" separator>
+  <SectionHeader title="Features" subtitle="What makes it great" />
+  <Grid columns={3} gap="4">
+    <Card title="Fast" />
+    <Card title="Accessible" />
+    <Card title="Beautiful" />
+  </Grid>
+</Section>
+```
+
+## SectionHeader Component
+- Centered heading + subtitle combination
+- Use inside `<Section>` for consistent page structure
+
+### SectionHeader example:
+```tsx
+<SectionHeader title="Get Started" subtitle="Everything you need to build your next project" />
+```
+
+## Content Components
+
+### Highlight
+- Inline text emphasis with accent styling
+```tsx
+<Text>This is <Highlight>important</Highlight> information.</Text>
+```
+
+### CodeBlock
+- Syntax-highlighted code display
+```tsx
+<CodeBlock language="tsx">{`const x = 1;`}</CodeBlock>
+```
+
+### Quote
+- Styled blockquote for pull quotes and testimonials
+```tsx
+<Quote>Design is not just what it looks like. Design is how it works.</Quote>
+```
+
+## ParallaxLayout Component
+- Fixed background scroll layout for hero sections and visual breaks
+- Content scrolls over a fixed background
+
+### ParallaxLayout example:
+```tsx
+<ParallaxLayout>
+  <Section bg="default">
+    <Heading level={1}>Welcome</Heading>
+  </Section>
+</ParallaxLayout>
+```
+
 ## Common Patterns
 
 ### Building a form:

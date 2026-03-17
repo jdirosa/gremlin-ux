@@ -78,6 +78,12 @@ export type { TextareaProps } from "./components/textarea";
 export { Quote } from "./components/quote";
 export type { QuoteProps } from "./components/quote";
 
+export { Nav } from "./components/nav";
+export type { NavProps, NavSectionProps, NavItemProps } from "./components/nav";
+
+export { Link } from "./components/link";
+export type { LinkProps } from "./components/link";
+
 export { Animate } from "./components/animate";
 export type { AnimateProps } from "./components/animate";
 
@@ -98,6 +104,8 @@ export { headingRecipe, type HeadingVariantProps } from "./components/layout/hea
 export { highlightRecipe, type HighlightVariantProps } from "./components/highlight";
 export { codeBlockRecipe, type CodeBlockVariantProps } from "./components/code-block";
 export { textareaRecipe, type TextareaVariantProps } from "./components/textarea";
+export { navItemRecipe, type NavItemVariantProps } from "./components/nav";
+export { linkRecipe, type LinkVariantProps } from "./components/link";
 
 // ── Tokens ───────────────────────────────────────────────────────────
 export { token } from "./tokens";

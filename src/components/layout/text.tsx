@@ -43,7 +43,7 @@ const colorMap = {
 } as const;
 
 export const Text = forwardRef<HTMLElement, TextProps>(
-  function Text({ asChild, as = "p", size, color, weight, lineHeight, align, font, italic, mb, mt, mx, maxWidth, center, className, style, ...rest }, ref) {
+  function Text({ asChild, as = "p", size, color = "default", weight, lineHeight, align, font, italic, mb, mt, mx, maxWidth, center, className, style, ...rest }, ref) {
     const Comp = asChild ? Slot : as;
 
     const marginStyle: CSSProperties = {};

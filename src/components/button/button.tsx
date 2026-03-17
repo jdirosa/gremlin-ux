@@ -115,6 +115,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               <span style={{ visibility: "hidden" }}>{children}</span>
             )}
           </>
+        ) : asChild ? (
+          children
         ) : (
           <>
             {leftIcon && <span aria-hidden="true">{leftIcon}</span>}

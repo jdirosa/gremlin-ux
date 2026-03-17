@@ -4,8 +4,8 @@ export type SectionVariantProps = NonNullable<Parameters<typeof sectionRecipe>[0
 
 export const sectionRecipe = cva({
   base: {
-    px: { base: "4", md: "6" },
-    py: { base: "8", md: "12" },
+    px: "6",
+    py: "12",
     width: "100%",
     "section + &": {
       pt: "80px",

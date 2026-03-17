@@ -253,21 +253,38 @@ const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     useEffect(() => {
       if (!open) return;
 
-      const originalOverflow = document.body.style.overflow;
-      const originalPaddingRight = document.body.style.paddingRight;
+      const html = document.documentElement;
+      const body = document.body;
+      const originalOverflow = body.style.overflow;
+      const originalPaddingRight = body.style.paddingRight;
+      const originalHtmlOverflow = html.style.overflow;
 
       // Account for scrollbar width to prevent layout shift
       const scrollbarWidth =
-        window.innerWidth - document.documentElement.clientWidth;
+        window.innerWidth - html.clientWidth;
 
-      document.body.style.overflow = "hidden";
+      body.style.overflow = "hidden";
+      html.style.overflow = "hidden";
       if (scrollbarWidth > 0) {
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        body.style.paddingRight = `${scrollbarWidth}px`;
+        // Also compensate fixed-position elements (e.g., ParallaxLayout backgrounds)
+        const fixedEls = document.querySelectorAll<HTMLElement>('[style*="position: fixed"], [style*="position:fixed"]');
+        fixedEls.forEach((el) => {
+          el.dataset.modalPadding = el.style.paddingRight;
+          el.style.paddingRight = `${scrollbarWidth}px`;
+        });
       }
 
       return () => {
-        document.body.style.overflow = originalOverflow;
-        document.body.style.paddingRight = originalPaddingRight;
+        body.style.overflow = originalOverflow;
+        body.style.paddingRight = originalPaddingRight;
+        html.style.overflow = originalHtmlOverflow;
+        // Restore fixed elements
+        const fixedEls = document.querySelectorAll<HTMLElement>('[data-modal-padding]');
+        fixedEls.forEach((el) => {
+          el.style.paddingRight = el.dataset.modalPadding ?? "";
+          delete el.dataset.modalPadding;
+        });
       };
     }, [open]);
 
