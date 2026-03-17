@@ -7,6 +7,9 @@ export const sectionRecipe = cva({
     px: { base: "4", md: "6" },
     py: { base: "8", md: "12" },
     width: "100%",
+    "section + &": {
+      pt: "80px",
+    },
   },
   variants: {
     bg: {
