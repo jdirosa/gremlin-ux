@@ -70,8 +70,14 @@ const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavItem(
   const Comp = asChild ? Slot : "button";
   return (
     <Comp ref={ref} className={cx(navItemRecipe({ active }), className)} {...rest}>
-      <span className={css({ flex: "1", textAlign: "left" })}>{children}</span>
-      {badge != null && badge}
+      {asChild ? (
+        children
+      ) : (
+        <>
+          <span className={css({ flex: "1", textAlign: "left" })}>{children}</span>
+          {badge != null && badge}
+        </>
+      )}
     </Comp>
   );
 });
