@@ -11,6 +11,9 @@ export const gremlinPreset = definePreset({
   },
 
   globalCss: {
+    html: {
+      overflowX: "hidden",
+    },
     body: {
       fontFamily: "body",
     },
