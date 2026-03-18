@@ -96,12 +96,22 @@ export function Tooltip({
   return (
     <>
       {trigger}
-      {open &&
+      {open && !isPositioned &&
+        createPortal(
+          <div
+            ref={refs.setFloating}
+            style={{ ...floatingStyles, position: "fixed", visibility: "hidden", pointerEvents: "none" }}
+          >
+            {content}
+          </div>,
+          document.body,
+        )}
+      {open && isPositioned &&
         createPortal(
           <div
             ref={refs.setFloating}
             role="tooltip"
-            style={{ ...floatingStyles, ...(isPositioned ? {} : { visibility: "hidden" }) }}
+            style={floatingStyles}
             className={cx(tooltipContentStyles, className)}
           >
             {content}

@@ -30,15 +30,11 @@ import { popoverContentStyles } from "./popover.recipe";
 interface PopoverContextValue {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  triggerRef: React.RefObject<HTMLElement | null>;
+  triggerEl: HTMLElement | null;
+  setTriggerEl: (el: HTMLElement | null) => void;
   contentId: string;
-  setReference: (node: HTMLElement | null) => void;
-  setFloating: (node: HTMLFloatingElement | null) => void;
-  floatingStyles: React.CSSProperties;
   placement: Placement;
 }
-
-type HTMLFloatingElement = HTMLElement;
 
 const PopoverContext = createContext<PopoverContextValue | undefined>(undefined);
 
@@ -71,35 +67,14 @@ function PopoverRoot({
     onChange: onOpenChange,
   });
 
-  const triggerRef = useRef<HTMLElement | null>(null);
+  // STATE not ref — so Content re-renders when trigger mounts
+  const [triggerEl, setTriggerEl] = useState<HTMLElement | null>(null);
   const contentId = `popover-${useId()}`;
 
-  const { refs, floatingStyles, isPositioned } = useFloating({
-    placement,
-    open,
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
-    whileElementsMounted: autoUpdate,
-  });
-
-  // Hide until Floating UI has computed position (prevents top-left flash)
-  const positionedStyles: React.CSSProperties = {
-    ...floatingStyles,
-    ...(isPositioned ? {} : { visibility: "hidden" as const }),
-  };
-
-  const contextValue: PopoverContextValue = {
-    open,
-    onOpenChange: setOpen,
-    triggerRef,
-    contentId,
-    setReference: refs.setReference,
-    setFloating: refs.setFloating,
-    floatingStyles: positionedStyles,
-    placement,
-  };
-
   return (
-    <PopoverContext.Provider value={contextValue}>
+    <PopoverContext.Provider
+      value={{ open, onOpenChange: setOpen, triggerEl, setTriggerEl, contentId, placement }}
+    >
       {children}
     </PopoverContext.Provider>
   );
@@ -114,17 +89,16 @@ export type PopoverTriggerProps = {
 
 const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
   function PopoverTrigger({ asChild = false, children, ...rest }, ref) {
-    const { open, onOpenChange, triggerRef, contentId, setReference } = usePopoverContext();
+    const { open, onOpenChange, setTriggerEl, contentId } = usePopoverContext();
     const Comp = asChild ? Slot : "button";
 
     const mergedRef = useCallback(
       (node: HTMLButtonElement | null) => {
         if (typeof ref === "function") ref(node);
         else if (ref) (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node;
-        triggerRef.current = node;
-        setReference(node);
+        setTriggerEl(node);
       },
-      [ref, triggerRef, setReference],
+      [ref, setTriggerEl],
     );
 
     return (
@@ -149,21 +123,62 @@ export type PopoverContentProps = {
   children: ReactNode;
 } & Omit<ComponentPropsWithoutRef<"div">, "role">;
 
+// Transform-origin points toward the trigger so it "squeezes out" of it
+const ORIGIN_MAP: Record<string, string> = {
+  top: "bottom center",
+  "top-start": "bottom left",
+  "top-end": "bottom right",
+  bottom: "top center",
+  "bottom-start": "top left",
+  "bottom-end": "top right",
+  left: "center right",
+  "left-start": "top right",
+  "left-end": "bottom right",
+  right: "center left",
+  "right-start": "top left",
+  "right-end": "bottom left",
+};
+
 const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
   function PopoverContent({ className, children, ...rest }, ref) {
-    const { open, onOpenChange, contentId, setFloating, floatingStyles, triggerRef } =
+    const { open, onOpenChange, contentId, triggerEl, placement } =
       usePopoverContext();
     const contentRef = useRef<HTMLDivElement | null>(null);
+    const [animState, setAnimState] = useState<"entering" | "open">("entering");
+
+    // useFloating co-located with the element it positions.
+    // triggerEl is STATE so this re-runs when trigger mounts.
+    const { refs, floatingStyles, isPositioned, placement: resolvedPlacement } = useFloating({
+      placement,
+      open,
+      middleware: [offset(8), flip(), shift({ padding: 8 })],
+      whileElementsMounted: autoUpdate,
+      elements: {
+        reference: triggerEl,
+      },
+    });
+
+    const transformOrigin = ORIGIN_MAP[resolvedPlacement] || "top center";
 
     const mergedRef = useCallback(
       (node: HTMLDivElement | null) => {
         if (typeof ref === "function") ref(node);
         else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
         contentRef.current = node;
-        setFloating(node);
+        refs.setFloating(node);
       },
-      [ref, setFloating],
+      [ref, refs],
     );
+
+    // Only animate after positioned at the correct spot
+    useEffect(() => {
+      if (!open || !isPositioned) {
+        setAnimState("entering");
+        return;
+      }
+      const raf = requestAnimationFrame(() => setAnimState("open"));
+      return () => cancelAnimationFrame(raf);
+    }, [open, isPositioned]);
 
     // Close on Escape
     const handleKeyDown = useCallback(
@@ -171,10 +186,10 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
         if (e.key === "Escape") {
           e.stopPropagation();
           onOpenChange(false);
-          triggerRef.current?.focus();
+          triggerEl?.focus();
         }
       },
-      [onOpenChange, triggerRef],
+      [onOpenChange, triggerEl],
     );
 
     // Close on outside click
@@ -184,24 +199,21 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
         if (
           contentRef.current &&
           !contentRef.current.contains(e.target as Node) &&
-          triggerRef.current &&
-          !triggerRef.current.contains(e.target as Node)
+          triggerEl &&
+          !triggerEl.contains(e.target as Node)
         ) {
           onOpenChange(false);
         }
       };
       document.addEventListener("mousedown", handleClick);
       return () => document.removeEventListener("mousedown", handleClick);
-    }, [open, onOpenChange, triggerRef]);
+    }, [open, onOpenChange, triggerEl]);
 
-    // Focus content on open
+    // Focus content when animation completes
     useEffect(() => {
-      if (!open) return;
-      const timer = requestAnimationFrame(() => {
-        contentRef.current?.focus();
-      });
-      return () => cancelAnimationFrame(timer);
-    }, [open]);
+      if (animState !== "open") return;
+      contentRef.current?.focus();
+    }, [animState]);
 
     if (!open) return null;
 
@@ -211,6 +223,7 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
         id={contentId}
         role="dialog"
         tabIndex={-1}
+        data-state={animState}
         style={floatingStyles}
         className={cx(popoverContentStyles, className)}
         onKeyDown={handleKeyDown}
