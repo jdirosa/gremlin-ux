@@ -15,6 +15,7 @@ export const cardRecipe = cva({
   variants: {
     interactive: {
       true: {
+        cursor: "pointer",
         _motionSafe: {
           transition:
             "box-shadow 150ms token(easings.default), transform 150ms token(easings.default)",

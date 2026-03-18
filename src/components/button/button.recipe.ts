@@ -44,7 +44,6 @@ export const buttonRecipe = cva({
     "&[aria-disabled=true]": {
       opacity: 0.5,
       cursor: "not-allowed",
-      pointerEvents: "none",
     },
   },
 

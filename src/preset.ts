@@ -202,6 +202,10 @@ export const gremlinPreset = definePreset({
           entranceFadeLeft: { value: "entranceFadeLeft {durations.dramatic} {easings.rubber} both" },
           entranceFadeRight: { value: "entranceFadeRight {durations.dramatic} {easings.rubber} both" },
           entranceScale: { value: "entranceScale {durations.slow} {easings.rubber} both" },
+          drawerSlideInRight: { value: "drawerSlideInRight {durations.normal} {easings.out}" },
+          drawerSlideOutRight: { value: "drawerSlideOutRight {durations.fast} {easings.in}" },
+          drawerSlideInLeft: { value: "drawerSlideInLeft {durations.normal} {easings.out}" },
+          drawerSlideOutLeft: { value: "drawerSlideOutLeft {durations.fast} {easings.in}" },
         },
       },
 
@@ -500,6 +504,45 @@ export const gremlinPreset = definePreset({
           "0%": { transform: "translateY(0) rotate(var(--tilt)) scale(1)" },
           "40%": { transform: "translateY(-10px) rotate(calc(var(--tilt) * -0.6)) scale(1.03)" },
           "100%": { transform: "translateY(-6px) rotate(0.5deg) scale(1.02)" },
+        },
+        checkmarkDraw: {
+          from: { strokeDashoffset: "24" },
+          to: { strokeDashoffset: "0" },
+        },
+        radioFill: {
+          "0%": { transform: "scale(0)", opacity: "0" },
+          "60%": { transform: "scale(1.2)", opacity: "1" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        switchThumb: {
+          "0%": { transform: "translateX(0) scaleX(1)" },
+          "40%": { transform: "translateX(50%) scaleX(1.15)" },
+          "100%": { transform: "translateX(100%) scaleX(1)" },
+        },
+        switchThumbReverse: {
+          "0%": { transform: "translateX(100%) scaleX(1)" },
+          "40%": { transform: "translateX(50%) scaleX(1.15)" },
+          "100%": { transform: "translateX(0) scaleX(1)" },
+        },
+        progressIndeterminate: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(250%)" },
+        },
+        drawerSlideInRight: {
+          from: { transform: "translateX(100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        drawerSlideOutRight: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(100%)" },
+        },
+        drawerSlideInLeft: {
+          from: { transform: "translateX(-100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        drawerSlideOutLeft: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-100%)" },
         },
       },
     },

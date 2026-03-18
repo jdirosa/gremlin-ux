@@ -99,6 +99,74 @@ export type { LinkProps } from "./components/link";
 export { Animate } from "./components/animate";
 export type { AnimateProps } from "./components/animate";
 
+export { VisuallyHidden } from "./components/visually-hidden";
+export type { VisuallyHiddenProps } from "./components/visually-hidden";
+
+export { Skeleton } from "./components/skeleton";
+export type { SkeletonProps } from "./components/skeleton";
+
+export { Checkbox } from "./components/checkbox";
+export type { CheckboxProps } from "./components/checkbox";
+
+export { RadioGroup, Radio } from "./components/radio-group";
+export type { RadioGroupProps, RadioProps } from "./components/radio-group";
+
+export { Switch } from "./components/switch";
+export type { SwitchProps } from "./components/switch";
+
+export { Select } from "./components/select";
+export type { SelectProps } from "./components/select";
+
+export { Tooltip } from "./components/tooltip";
+export type { TooltipProps } from "./components/tooltip";
+
+export { Popover } from "./components/popover";
+export type { PopoverProps, PopoverTriggerProps, PopoverContentProps, PopoverCloseProps } from "./components/popover";
+
+export { Alert, AlertDialogContent, AlertDialogTrigger } from "./components/alert";
+export type { AlertProps, AlertDialogContentProps, AlertDialogTriggerProps } from "./components/alert";
+
+export { Tabs } from "./components/tabs";
+export type { TabsProps, TabListProps, TabProps, TabPanelProps } from "./components/tabs";
+
+export { Accordion } from "./components/accordion";
+export type { AccordionProps, AccordionItemProps, AccordionTriggerProps, AccordionContentProps } from "./components/accordion";
+
+export { Progress } from "./components/progress";
+export type { ProgressProps } from "./components/progress";
+
+export { Drawer } from "./components/drawer";
+export type {
+  DrawerProps,
+  DrawerTriggerProps,
+  DrawerContentProps,
+  DrawerHeaderProps,
+  DrawerBodyProps,
+  DrawerFooterProps,
+  DrawerCloseProps,
+  DrawerPlacement,
+  DrawerSize,
+} from "./components/drawer";
+
+export { Breadcrumbs, BreadcrumbItem, BreadcrumbSeparator } from "./components/breadcrumbs";
+export type { BreadcrumbsProps, BreadcrumbItemProps, BreadcrumbSeparatorProps } from "./components/breadcrumbs";
+
+export { Pagination } from "./components/pagination";
+export type { PaginationProps } from "./components/pagination";
+
+export { Table } from "./components/table";
+export type {
+  TableProps,
+  TableHeadProps,
+  TableBodyProps,
+  TableRowProps,
+  TableHeaderCellProps,
+  TableCellProps,
+} from "./components/table";
+
+export { AspectRatio } from "./components/aspect-ratio";
+export type { AspectRatioProps } from "./components/aspect-ratio";
+
 // ── Layout ───────────────────────────────────────────────────────────
 export { Box, Stack, HStack, Grid, Container, Text, Heading } from "./components/layout";
 export type { BoxProps, StackProps, HStackProps, GridProps, ContainerProps, TextProps, HeadingProps, SpaceScale, RadiiToken, ContainerSize } from "./components/layout";
@@ -122,6 +190,19 @@ export { navItemRecipe, type NavItemVariantProps } from "./components/nav";
 export { linkRecipe, type LinkVariantProps } from "./components/link";
 export { topNavRecipe, topNavLinkRecipe, type TopNavVariantProps, type TopNavLinkVariantProps } from "./components/top-nav";
 export { timelineRecipe, timelineItemRecipe, timelineMarkerRecipe, type TimelineVariantProps, type TimelineItemVariantProps, type TimelineMarkerVariantProps } from "./components/timeline";
+export { skeletonRecipe, type SkeletonVariantProps } from "./components/skeleton";
+export { checkboxRecipe, checkboxControlRecipe, checkboxLabelRecipe, type CheckboxVariantProps } from "./components/checkbox";
+export { radioGroupRecipe, radioItemRecipe, radioControlRecipe, radioLabelRecipe, type RadioGroupVariantProps } from "./components/radio-group";
+export { switchRecipe, switchTrackRecipe, switchThumbRecipe, switchLabelRecipe, type SwitchVariantProps } from "./components/switch";
+export { selectRecipe, type SelectVariantProps } from "./components/select";
+export { alertRecipe, type AlertVariantProps } from "./components/alert";
+export { tabListRecipe, tabRecipe, type TabsVariantProps } from "./components/tabs";
+export { accordionRecipe, type AccordionVariantProps } from "./components/accordion";
+export { progressTrackRecipe, progressBarRecipe, type ProgressVariantProps } from "./components/progress";
+export { drawerContentRecipe, drawerOverlayStyles, drawerHeaderStyles, drawerBodyStyles, drawerFooterStyles, drawerCloseStyles } from "./components/drawer";
+export { breadcrumbsNavStyles, breadcrumbsListStyles, breadcrumbItemStyles, breadcrumbSeparatorStyles } from "./components/breadcrumbs";
+export { paginationNavStyles, paginationButtonRecipe, paginationEllipsisStyles, type PaginationButtonVariantProps } from "./components/pagination";
+export { tableRecipe, tableHeadStyles, tableBodyStyles, tableRowRecipe, tableHeaderCellStyles, tableCellRecipe, type TableVariantProps } from "./components/table";
 
 // ── Tokens ───────────────────────────────────────────────────────────
 export { token } from "./tokens";
