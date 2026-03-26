@@ -27,18 +27,16 @@ export const autocompleteContentStyles = css({
   zIndex: 50,
   minWidth: "200px",
 
-  // Open animation
-  "&[data-state=open]": {
-    _motionSafe: {
-      animation: "scaleIn token(durations.fast) token(easings.out)",
-    },
+  // Opacity-only animation to avoid conflicting with
+  // Floating UI's `transform: translate()` positioning.
+  _motionSafe: {
+    transition: "opacity token(durations.fast) token(easings.out)",
   },
-
-  // Closed animation
-  "&[data-state=closed]": {
-    _motionSafe: {
-      animation: "scaleOut token(durations.fast) token(easings.in)",
-    },
+  "&[data-state=entering]": {
+    opacity: 0,
+  },
+  "&[data-state=open]": {
+    opacity: 1,
   },
 });
 

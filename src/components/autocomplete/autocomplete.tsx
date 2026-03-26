@@ -68,11 +68,9 @@ interface AutocompleteContextValue {
   getItemId: (index: number) => string;
   listboxId: string;
   triggerId: string;
-  triggerRef: React.RefObject<HTMLElement | null>;
-  floatingStyles: React.CSSProperties;
-  isPositioned: boolean;
-  setFloatingRef: (node: HTMLElement | null) => void;
-  setReferenceRef: (node: HTMLElement | null) => void;
+  triggerEl: HTMLElement | null;
+  setTriggerEl: (el: HTMLElement | null) => void;
+  placement: Placement;
 }
 
 const AutocompleteContext = createContext<AutocompleteContextValue | undefined>(
@@ -178,7 +176,8 @@ function AutocompleteRoot(props: AutocompleteProps) {
 
   const items = useRef<Map<string, HTMLElement>>(new Map());
   const itemValues = useRef<string[]>([]);
-  const triggerRef = useRef<HTMLElement | null>(null);
+  // STATE not ref — so Content re-renders when trigger mounts
+  const [triggerEl, setTriggerEl] = useState<HTMLElement | null>(null);
 
   const reactId = useId();
   const listboxId = `autocomplete-listbox-${reactId}`;
@@ -247,25 +246,6 @@ function AutocompleteRoot(props: AutocompleteProps) {
     itemValues.current = itemValues.current.filter((v) => v !== itemValue);
   }, []);
 
-  // Floating UI
-  const { refs, floatingStyles, isPositioned } = useFloating({
-    open,
-    placement,
-    middleware: [
-      offset(4),
-      flip({ padding: 8 }),
-      floatingSize({
-        apply({ rects, elements }) {
-          Object.assign(elements.floating.style, {
-            minWidth: `${rects.reference.width}px`,
-          });
-        },
-        padding: 8,
-      }),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
-
   // Reset search and highlight on close
   useEffect(() => {
     if (!open) {
@@ -295,11 +275,9 @@ function AutocompleteRoot(props: AutocompleteProps) {
       getItemId,
       listboxId,
       triggerId,
-      triggerRef,
-      floatingStyles,
-      isPositioned,
-      setFloatingRef: refs.setFloating,
-      setReferenceRef: refs.setReference,
+      triggerEl,
+      setTriggerEl,
+      placement,
     }),
     [
       open,
@@ -314,15 +292,13 @@ function AutocompleteRoot(props: AutocompleteProps) {
       handleSearchTermChange,
       highlightedIndex,
       setHighlightedIndex,
-      isPositioned,
       registerItem,
       unregisterItem,
       getItemId,
       listboxId,
       triggerId,
-      floatingStyles,
-      refs.setFloating,
-      refs.setReference,
+      triggerEl,
+      placement,
     ],
   );
 
@@ -344,7 +320,7 @@ const AutocompleteTrigger = forwardRef<
   HTMLButtonElement,
   AutocompleteTriggerProps
 >(function AutocompleteTrigger({ asChild = false, children, ...rest }, ref) {
-  const { open, onOpenChange, setReferenceRef, triggerId, listboxId, triggerRef, highlightedIndex, getItemId } =
+  const { open, onOpenChange, setTriggerEl, triggerId, listboxId, highlightedIndex, getItemId } =
     useAutocompleteContext();
   const Comp = asChild ? Slot : "button";
 
@@ -359,10 +335,9 @@ const AutocompleteTrigger = forwardRef<
       } else if (ref) {
         (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node;
       }
-      setReferenceRef(node);
-      triggerRef.current = node;
+      setTriggerEl(node);
     },
-    [ref, setReferenceRef, triggerRef],
+    [ref, setTriggerEl],
   );
 
   return (
@@ -402,13 +377,35 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
       items,
       toggleValue,
       onSearchTermChange,
-      floatingStyles,
-      isPositioned,
-      setFloatingRef,
-      triggerRef,
+      triggerEl,
+      placement,
     } = useAutocompleteContext();
 
     const contentRef = useRef<HTMLDivElement | null>(null);
+    const [animState, setAnimState] = useState<"entering" | "open">("entering");
+
+    // useFloating co-located with the element it positions.
+    // triggerEl is STATE so this re-runs when trigger mounts.
+    const { refs, floatingStyles, isPositioned } = useFloating({
+      open,
+      placement,
+      middleware: [
+        offset(4),
+        flip({ padding: 8 }),
+        floatingSize({
+          apply({ rects, elements }) {
+            Object.assign(elements.floating.style, {
+              minWidth: `${rects.reference.width}px`,
+            });
+          },
+          padding: 8,
+        }),
+      ],
+      whileElementsMounted: autoUpdate,
+      elements: {
+        reference: triggerEl,
+      },
+    });
 
     const mergedRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -418,20 +415,27 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
           (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }
         contentRef.current = node;
-        setFloatingRef(node);
+        refs.setFloating(node);
       },
-      [ref, setFloatingRef],
+      [ref, refs],
     );
 
-    // Focus first input inside content on open (preventScroll avoids page jump)
+    // Only animate after positioned at the correct spot
     useEffect(() => {
-      if (!open) return;
-      const timer = requestAnimationFrame(() => {
-        const input = contentRef.current?.querySelector("input");
-        input?.focus({ preventScroll: true });
-      });
-      return () => cancelAnimationFrame(timer);
-    }, [open]);
+      if (!open || !isPositioned) {
+        setAnimState("entering");
+        return;
+      }
+      const raf = requestAnimationFrame(() => setAnimState("open"));
+      return () => cancelAnimationFrame(raf);
+    }, [open, isPositioned]);
+
+    // Focus first input inside content on open (after positioning)
+    useEffect(() => {
+      if (animState !== "open") return;
+      const input = contentRef.current?.querySelector("input");
+      input?.focus({ preventScroll: true });
+    }, [animState]);
 
     // Close on click outside
     useEffect(() => {
@@ -439,14 +443,13 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
 
       const handleMouseDown = (e: MouseEvent) => {
         const content = contentRef.current;
-        const trigger = triggerRef.current;
         const target = e.target as Node;
 
         if (
           content &&
           !content.contains(target) &&
-          trigger &&
-          !trigger.contains(target)
+          triggerEl &&
+          !triggerEl.contains(target)
         ) {
           onOpenChange(false);
         }
@@ -454,7 +457,7 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
 
       document.addEventListener("mousedown", handleMouseDown);
       return () => document.removeEventListener("mousedown", handleMouseDown);
-    }, [open, onOpenChange, triggerRef]);
+    }, [open, onOpenChange, triggerEl]);
 
     // Keyboard navigation
     const handleKeyDown = useCallback(
@@ -506,7 +509,7 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
                 if (!multiple) {
                   onOpenChange(false);
                   onSearchTermChange("");
-                  triggerRef.current?.focus({ preventScroll: true });
+                  triggerEl?.focus({ preventScroll: true });
                 }
               }
             }
@@ -515,7 +518,7 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
           case "Escape": {
             e.preventDefault();
             onOpenChange(false);
-            triggerRef.current?.focus({ preventScroll: true });
+            triggerEl?.focus({ preventScroll: true });
             break;
           }
         }
@@ -529,7 +532,7 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
         multiple,
         onOpenChange,
         onSearchTermChange,
-        triggerRef,
+        triggerEl,
       ],
     );
 
@@ -539,8 +542,8 @@ const AutocompleteContent = forwardRef<HTMLDivElement, AutocompleteContentProps>
       <div
         ref={mergedRef}
         className={cx(autocompleteContentStyles, className)}
-        data-state="open"
-        style={{ ...floatingStyles, visibility: isPositioned ? "visible" : "hidden" }}
+        data-state={animState}
+        style={floatingStyles}
         onKeyDown={handleKeyDown}
         {...rest}
       >
@@ -667,7 +670,7 @@ const AutocompleteItem = forwardRef<HTMLDivElement, AutocompleteItemProps>(
       itemValues,
       onSearchTermChange,
       getItemId,
-      triggerRef,
+      triggerEl,
     } = useAutocompleteContext();
 
     const itemRef = useRef<HTMLDivElement | null>(null);
@@ -710,9 +713,9 @@ const AutocompleteItem = forwardRef<HTMLDivElement, AutocompleteItemProps>(
       if (!multiple) {
         onOpenChange(false);
         onSearchTermChange("");
-        triggerRef.current?.focus({ preventScroll: true });
+        triggerEl?.focus({ preventScroll: true });
       }
-    }, [disabled, itemValue, toggleValue, multiple, onOpenChange, onSearchTermChange, triggerRef]);
+    }, [disabled, itemValue, toggleValue, multiple, onOpenChange, onSearchTermChange, triggerEl]);
 
     const handleMouseEnter = useCallback(() => {
       if (disabled) return;
