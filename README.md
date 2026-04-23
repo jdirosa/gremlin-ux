@@ -1,8 +1,6 @@
 # Gremlin UI
 
-A design system that grins at you with too many teeth.
-
-Dark rubber hose aesthetic. Airtight engineering. The cheerful cartoon that's been possessed.
+A rubber hosed theme, creep design system
 
 ## Install
 
